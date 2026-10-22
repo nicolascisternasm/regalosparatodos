@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+:root {
+  --bg:     #FFF0F3;
+  --fg:     #2B0A1A;
+  --gold:   #FF6B8A;
+  --red:    #FF9F45;
+  --card:   #FFFFFF;
+  --muted:  #A06070;
+  --border: #F5D5DE;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-nunito), system-ui, sans-serif;
+  overflow-x: hidden;
+}
