@@ -48,23 +48,23 @@ ALTER TABLE items_pedido ADD COLUMN IF NOT EXISTS variante_sku text;
 -- 6. Precargar Meta cumplida como variantes + 13 variantes
 DO $$
 DECLARE
-  caja_id uuid;
+  v_caja_id uuid;
 BEGIN
   -- Cambiar tipo de Meta cumplida
-  SELECT id INTO caja_id FROM cajas WHERE nombre = 'Meta cumplida' LIMIT 1;
+  SELECT id INTO v_caja_id FROM cajas WHERE nombre = 'Meta cumplida' LIMIT 1;
 
-  IF caja_id IS NOT NULL THEN
+  IF v_caja_id IS NOT NULL THEN
     UPDATE cajas SET
       tipo = 'variantes',
       activo = true,
       descripcion_corta = 'Un detalle para celebrar un gran logro. Elige la presentación de graduación que más te guste y acompaña este momento con cariño.',
       descripcion = 'Celebra el esfuerzo, los aprendizajes y el comienzo de una nueva etapa con Meta cumplida. Descubre sus distintas presentaciones con peluche de graduación, globo con mensaje y dulces en una caja decorada. Cada opción tiene su propia fotografía, descripción, precio y disponibilidad: selecciona tu favorita para conocer la presentación que recibirás.',
       precio = 1
-    WHERE id = caja_id;
+    WHERE id = v_caja_id;
 
     -- Insertar variantes (solo si no existen)
     INSERT INTO variantes (caja_id, nombre, sku, descripcion, orden)
-    SELECT caja_id, v.nombre, v.sku, v.descripcion, v.orden
+    SELECT v_caja_id, v.nombre, v.sku, v.descripcion, v.orden
     FROM (VALUES
       ('Cerdito Estrella', 'MC-CER-EST', 'Una presentación de graduación con cerdito de peluche, birrete, globo plateado con mensaje de felicitación y dulces. La caja negra con cinta dorada acompaña un regalo alegre para celebrar su logro.', 1),
       ('Pingüino Estrella', 'MC-PIN-EST', 'Un pingüino de peluche con birrete protagoniza esta presentación de graduación. Se acompaña de globo plateado con mensaje de felicitación, dulces y una caja negra con cinta dorada.', 2),
@@ -81,7 +81,7 @@ BEGIN
       ('Plumitas Estrella', 'MC-AVE-EST', 'Un peluche amarillo de ave con birrete, acompañado de globo plateado con mensaje de felicitación y dulces. Presentado en caja negra con cinta dorada para celebrar un gran logro con un gesto alegre.', 13)
     ) AS v(nombre, sku, descripcion, orden)
     WHERE NOT EXISTS (
-      SELECT 1 FROM variantes WHERE caja_id = caja_id AND sku = v.sku
+      SELECT 1 FROM variantes WHERE caja_id = v_caja_id AND sku = v.sku
     );
   END IF;
 END $$;
