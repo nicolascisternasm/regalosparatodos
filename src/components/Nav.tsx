@@ -7,18 +7,49 @@ interface NavProps {
   cantidadCarrito?: number
 }
 
-const COLECCIONES = [
-  { emoji: '🎂', label: 'Cumpleaños', href: '/catalogo?cat=Cumpleaños', color: '#FFF0E0' },
-  { emoji: '💕', label: 'Parejas', href: '/catalogo?cat=Parejas', color: '#FFE8F0' },
-  { emoji: '👩', label: 'Para Ella', href: '/catalogo?cat=Para ella', color: '#F0E8FF' },
-  { emoji: '👨', label: 'Para Él', href: '/catalogo?cat=Para él', color: '#E8F4FF' },
-  { emoji: '👶', label: 'Bebés', href: '/catalogo?cat=Bebé', color: '#E8FFF0' },
-]
+const CATEGORIA_EMOJI: Record<string, string> = {
+  'cumpleaños': '🎂', 'cumpleanios': '🎂',
+  'parejas': '💕', 'pareja': '💕',
+  'para ella': '👩', 'para ellas': '👩',
+  'para él': '👨', 'para el': '👨', 'para ellos': '👨',
+  'bebés': '👶', 'bebes': '👶', 'bebé': '👶', 'bebe': '👶',
+  'huelitas': '🐾', 'mascotas': '🐾',
+  'para celebrar': '🎉', 'celebrar': '🎉',
+  'aniversario': '💍', 'navidad': '🎄', 'amor': '❤️',
+}
+
+const COLORES_PALETTE = ['#FFF0E0', '#FFE8F0', '#F0E8FF', '#E8F4FF', '#E8FFF0', '#FFF8E0', '#F0FFF4', '#FFF0F5']
+
+function getCategoriaEmoji(cat: string) {
+  return CATEGORIA_EMOJI[cat.toLowerCase().trim()] ?? '🎁'
+}
+
+interface Coleccion { label: string; emoji: string; href: string; color: string }
+
+function useCategorias(): Coleccion[] {
+  const [cols, setCols] = useState<Coleccion[]>([])
+  useEffect(() => {
+    fetch('/api/catalogo')
+      .then((r) => r.json())
+      .then(({ cajas }) => {
+        const unique = [...new Set<string>((cajas ?? []).map((c: { categoria: string }) => c.categoria))].filter(Boolean)
+        setCols(unique.map((cat, i) => ({
+          label: cat,
+          emoji: getCategoriaEmoji(cat),
+          href: `/catalogo?cat=${encodeURIComponent(cat)}`,
+          color: COLORES_PALETTE[i % COLORES_PALETTE.length],
+        })))
+      })
+      .catch(() => {})
+  }, [])
+  return cols
+}
 
 export default function Nav({ cantidadCarrito = 0 }: NavProps) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [colOpen, setColOpen] = useState(false)
+  const colecciones = useCategorias()
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 10)
@@ -134,9 +165,10 @@ export default function Nav({ cantidadCarrito = 0 }: NavProps) {
                   boxShadow: '0 16px 48px rgba(0,0,0,.14)',
                   padding: 20,
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(5, 1fr)',
+                  gridTemplateColumns: `repeat(${Math.min(colecciones.length || 4, 5)}, 1fr)`,
                   gap: 12,
-                  width: 480,
+                  width: Math.min(colecciones.length || 4, 5) * 96 + 40,
+                  minWidth: 280,
                   zIndex: 100,
                 }}
               >
@@ -160,7 +192,7 @@ export default function Nav({ cantidadCarrito = 0 }: NavProps) {
                   }} />
                 </div>
 
-                {COLECCIONES.map((col) => (
+                {colecciones.map((col) => (
                   <Link
                     key={col.label}
                     href={col.href}
@@ -270,7 +302,7 @@ export default function Nav({ cantidadCarrito = 0 }: NavProps) {
           <div style={{ marginTop: 8, marginBottom: 4 }}>
             <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--fg-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '8px 0 6px' }}>Colecciones</p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-              {COLECCIONES.map((col) => (
+              {colecciones.map((col) => (
                 <Link
                   key={col.label}
                   href={col.href}
