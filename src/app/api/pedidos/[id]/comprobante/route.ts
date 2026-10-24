@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase'
 import { getPedido } from '@/lib/pedidos'
 import { enviarConfirmacionComprobante } from '@/lib/email'
+import { getConfig } from '@/lib/configuracion'
 
 export async function POST(
   req: NextRequest,
@@ -89,8 +90,10 @@ export async function POST(
       `Ver comprobante: ${publicUrl}`
     )
 
-    const supervisorNum = process.env.WHATSAPP_SUPERVISOR ?? process.env.NEXT_PUBLIC_WHATSAPP_NUMERO ?? '56900000000'
-    const waUrl = `https://wa.me/${supervisorNum}?text=${mensajeWA}`
+    const cfg = await getConfig().catch(() => ({} as Record<string, string>))
+    const supervisorNum = cfg.supervisor_whatsapp || process.env.WHATSAPP_SUPERVISOR || '56963520658'
+    const supervisorNombre = cfg.supervisor_nombre || 'Supervisor'
+    const waUrl = `https://wa.me/${supervisorNum}?text=${mensajeWA.replace('🔔 *Nuevo', `🔔 *Hola ${supervisorNombre}! Nuevo`)}`
 
     return NextResponse.json({ ok: true, pago_id: pago.id, wa_url: waUrl })
   } catch (error) {
