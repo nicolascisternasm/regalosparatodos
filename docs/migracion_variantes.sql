@@ -4,7 +4,11 @@
 -- 1. Columnas nuevas en cajas
 ALTER TABLE cajas ADD COLUMN IF NOT EXISTS tipo text NOT NULL DEFAULT 'simple';
 ALTER TABLE cajas ADD COLUMN IF NOT EXISTS descripcion_corta text;
-ALTER TABLE cajas ADD CONSTRAINT IF NOT EXISTS cajas_tipo_check CHECK (tipo IN ('simple', 'variantes'));
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'cajas_tipo_check') THEN
+    ALTER TABLE cajas ADD CONSTRAINT cajas_tipo_check CHECK (tipo IN ('simple', 'variantes'));
+  END IF;
+END $$;
 
 -- 2. Tabla variantes
 CREATE TABLE IF NOT EXISTS variantes (
