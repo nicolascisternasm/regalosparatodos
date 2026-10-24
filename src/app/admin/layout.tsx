@@ -16,7 +16,7 @@ const NAV_ITEMS = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
-  const isLoginPage = pathname === '/admin/login'
+  const isLoginPage = pathname === '/admin/login' || pathname === '/admin/reset-password'
 
   const [authState, setAuthState] = useState<'checking' | 'ok' | 'redirect'>('checking')
   const [token, setToken] = useState('')
