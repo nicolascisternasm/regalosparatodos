@@ -22,6 +22,7 @@ export default function FichaProductoPage() {
   const [errorSeleccion, setErrorSeleccion] = useState('')
   const [esCurso, setEsCurso] = useState(false)
   const [cantidadCurso, setCantidadCurso] = useState(10)
+  const [cantidadesCurso, setCantidadesCurso] = useState<Record<string, number>>({})
 
   const cantidadCarrito = items.reduce((acc, i) => acc + i.cantidad, 0)
 
@@ -48,14 +49,19 @@ export default function FichaProductoPage() {
     if (!caja) return
 
     if (caja.tipo === 'variantes') {
-      if (!seleccionada) { setErrorSeleccion('Selecciona una presentación para continuar.'); return }
-      if (seleccionada.estado !== 'publicada') { setErrorSeleccion('Esta presentación no está disponible.'); return }
-      if (seleccionada.stock !== undefined && seleccionada.stock <= 0) { setErrorSeleccion('Esta presentación está agotada.'); return }
-      if (!esCurso && !seleccionada.precio) { setErrorSeleccion('Esta presentación aún no tiene precio definido.'); return }
-      if (esCurso) {
-        if (cantidadCurso < 10) { setErrorSeleccion('El mínimo para pedido de curso es 10 unidades.'); return }
-        agregarItem(caja, seleccionada, { cantidad: cantidadCurso, precioOverride: caja.precio_mayorista })
+      if (esCurso && caja.precio_mayorista) {
+        const totalUnidades = Object.values(cantidadesCurso).reduce((a, b) => a + b, 0)
+        if (totalUnidades < 10) { setErrorSeleccion('El mínimo para pedido de curso es 10 unidades en total.'); return }
+        const variantesConQty = variantesPublicadas.filter((v) => (cantidadesCurso[v.id] ?? 0) > 0)
+        if (variantesConQty.length === 0) { setErrorSeleccion('Elige al menos una presentación con cantidad mayor a 0.'); return }
+        variantesConQty.forEach((v) => {
+          agregarItem(caja, v, { cantidad: cantidadesCurso[v.id], precioOverride: caja.precio_mayorista })
+        })
       } else {
+        if (!seleccionada) { setErrorSeleccion('Selecciona una presentación para continuar.'); return }
+        if (seleccionada.estado !== 'publicada') { setErrorSeleccion('Esta presentación no está disponible.'); return }
+        if (seleccionada.stock !== undefined && seleccionada.stock <= 0) { setErrorSeleccion('Esta presentación está agotada.'); return }
+        if (!seleccionada.precio) { setErrorSeleccion('Esta presentación aún no tiene precio definido.'); return }
         agregarItem(caja, seleccionada)
       }
     } else {
@@ -87,6 +93,7 @@ export default function FichaProductoPage() {
   const variantesPublicadas = variantes.filter((v) => v.estado === 'publicada')
   const precio = seleccionada?.precio
   const esAgotada = seleccionada ? seleccionada.stock <= 0 : false
+  const totalUnidadesCurso = Object.values(cantidadesCurso).reduce((a, b) => a + b, 0)
 
   return (
     <>
@@ -176,14 +183,62 @@ export default function FichaProductoPage() {
               {caja.tipo === 'variantes' && (
                 <div className="mb-6">
                   <p className="text-sm font-700 mb-3" style={{ color: 'var(--fg)' }}>
-                    Elige tu presentación
-                    {seleccionada && <span className="font-400 ml-2" style={{ color: 'var(--muted)' }}>— {seleccionada.nombre}</span>}
+                    {esCurso && caja.precio_mayorista ? 'Elige la cantidad por presentación' : 'Elige tu presentación'}
+                    {!esCurso && seleccionada && <span className="font-400 ml-2" style={{ color: 'var(--muted)' }}>— {seleccionada.nombre}</span>}
                   </p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {variantesPublicadas.map((v) => {
                       const imgPrincipal = v.imagenes?.find((i) => i.es_principal) ?? v.imagenes?.[0]
                       const agotada = v.stock <= 0
                       const activa = seleccionada?.id === v.id
+                      const qtyCurso = cantidadesCurso[v.id] ?? 0
+
+                      if (esCurso && caja.precio_mayorista) {
+                        return (
+                          <div
+                            key={v.id}
+                            style={{
+                              border: qtyCurso > 0 ? '2.5px solid var(--dark-bg)' : '1.5px solid var(--border)',
+                              borderRadius: 12,
+                              overflow: 'hidden',
+                              background: agotada ? '#F8F8F8' : '#fff',
+                              opacity: agotada ? 0.5 : 1,
+                              textAlign: 'left',
+                            }}
+                          >
+                            {/* Foto */}
+                            <div style={{ aspectRatio: '1/1', background: '#F2F2F2', overflow: 'hidden' }}>
+                              {imgPrincipal ? (
+                                <img src={imgPrincipal.url} alt={v.nombre} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                              ) : (
+                                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32 }}>{caja.emoji}</div>
+                              )}
+                            </div>
+                            {/* Nombre + control cantidad */}
+                            <div style={{ padding: '8px 10px' }}>
+                              <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--fg)', lineHeight: 1.3, marginBottom: 6 }}>{v.nombre}</p>
+                              {agotada ? (
+                                <p style={{ fontSize: 10, color: '#DC2626', fontWeight: 600 }}>Agotado</p>
+                              ) : (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                  <button
+                                    type="button"
+                                    onClick={() => setCantidadesCurso((prev) => ({ ...prev, [v.id]: Math.max(0, (prev[v.id] ?? 0) - 1) }))}
+                                    style={{ width: 26, height: 26, borderRadius: '50%', border: '1.5px solid var(--border)', background: '#fff', cursor: 'pointer', fontWeight: 700, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--fg)', flexShrink: 0 }}
+                                  >−</button>
+                                  <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--fg)', minWidth: 18, textAlign: 'center' }}>{qtyCurso}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setCantidadesCurso((prev) => ({ ...prev, [v.id]: (prev[v.id] ?? 0) + 1 }))}
+                                    style={{ width: 26, height: 26, borderRadius: '50%', border: '1.5px solid var(--border)', background: '#fff', cursor: 'pointer', fontWeight: 700, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--fg)', flexShrink: 0 }}
+                                  >+</button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )
+                      }
+
                       return (
                         <button
                           key={v.id}
@@ -233,7 +288,7 @@ export default function FichaProductoPage() {
                     <input
                       type="checkbox"
                       checked={esCurso}
-                      onChange={(e) => { setEsCurso(e.target.checked); setErrorSeleccion('') }}
+                      onChange={(e) => { setEsCurso(e.target.checked); setErrorSeleccion(''); setCantidadesCurso({}) }}
                       style={{ width: 18, height: 18, cursor: 'pointer', accentColor: 'var(--dark-bg)' }}
                     />
                     <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--fg)' }}>
@@ -241,24 +296,14 @@ export default function FichaProductoPage() {
                     </span>
                   </label>
                   {esCurso && (
-                    <div style={{ marginTop: 12 }}>
-                      <label style={{ fontSize: 13, color: 'var(--muted)', display: 'block', marginBottom: 6 }}>
-                        Cantidad de unidades (mínimo 10)
-                      </label>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <input
-                          type="number"
-                          min={10}
-                          value={cantidadCurso}
-                          onChange={(e) => setCantidadCurso(Math.max(10, Number(e.target.value)))}
-                          style={{
-                            width: 90, padding: '8px 12px', fontSize: 16, fontWeight: 700,
-                            border: '1.5px solid var(--border)', borderRadius: 8,
-                            color: 'var(--fg)', background: '#fff', textAlign: 'center',
-                          }}
-                        />
-                        <span style={{ fontSize: 14, color: 'var(--muted)' }}>
-                          = <strong style={{ color: 'var(--fg)' }}>${(cantidadCurso * caja.precio_mayorista).toLocaleString('es-CL')}</strong> total
+                    <div style={{ marginTop: 12, padding: '10px 14px', background: '#fff', borderRadius: 10, border: '1px solid #FFE0B2' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: 13, color: 'var(--muted)' }}>
+                          Total unidades: <strong style={{ color: totalUnidadesCurso >= 10 ? 'var(--fg)' : '#DC2626' }}>{totalUnidadesCurso}</strong>
+                          {totalUnidadesCurso < 10 && <span style={{ fontSize: 11, color: '#DC2626', marginLeft: 6 }}>(mín. 10)</span>}
+                        </span>
+                        <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--fg)' }}>
+                          ${(totalUnidadesCurso * caja.precio_mayorista).toLocaleString('es-CL')}
                         </span>
                       </div>
                     </div>
@@ -291,7 +336,18 @@ export default function FichaProductoPage() {
                   cursor: esAgotada ? 'not-allowed' : 'pointer',
                 }}
               >
-                {agregado ? '✓ Agregado al carrito' : esAgotada ? 'Agotado' : caja.tipo === 'variantes' && !seleccionada ? 'Selecciona una presentación' : esCurso ? `Agregar ${cantidadCurso} unidades al carrito →` : 'Agregar al carrito →'}
+                {agregado
+                  ? '✓ Agregado al carrito'
+                  : esAgotada
+                  ? 'Agotado'
+                  : esCurso && caja.precio_mayorista
+                  ? totalUnidadesCurso > 0
+                    ? `Agregar ${totalUnidadesCurso} unidades al carrito →`
+                    : 'Elige las cantidades por presentación'
+                  : caja.tipo === 'variantes' && !seleccionada
+                  ? 'Selecciona una presentación'
+                  : 'Agregar al carrito →'
+                }
               </button>
 
               {/* Descripción completa */}
