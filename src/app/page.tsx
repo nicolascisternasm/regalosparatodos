@@ -229,8 +229,10 @@ export default function Home() {
             </div>
 
             {/* Main product — tall portrait, no card box */}
-            <div style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
+            <div className="hero-img-wrap" style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
               <div
+                key={slideIdx}
+                className="hero-slide-img"
                 style={{
                   width: 340,
                   height: 440,
@@ -242,6 +244,7 @@ export default function Home() {
                 <img
                   src={slide.image}
                   alt="Caja de regalo premium"
+                  className="hero-product-img"
                   style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
                 />
               </div>
@@ -888,6 +891,29 @@ export default function Home() {
       </footer>
 
       <style>{`
+        /* ── Hero image hover ── */
+        .hero-img-wrap {
+          transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .hero-img-wrap:hover {
+          transform: scale(1.03) rotate(-1.5deg) translateY(-6px);
+        }
+        .hero-product-img {
+          transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .hero-img-wrap:hover .hero-product-img {
+          transform: scale(1.07);
+        }
+
+        /* ── Slide transition ── */
+        @keyframes heroImgIn {
+          from { opacity: 0; transform: scale(0.95) translateX(20px); }
+          to   { opacity: 1; transform: scale(1)    translateX(0);    }
+        }
+        .hero-slide-img {
+          animation: heroImgIn 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+        }
+
         @media (max-width: 768px) {
           .hero-grid {
             grid-template-columns: 1fr !important;
