@@ -106,8 +106,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             >
               Cerrar sesión →
             </button>
-            <Link href="/" className="text-xs no-underline" style={{ color: 'rgba(255,255,255,.3)' }}>
-              ← Ver tienda
+            <Link href="/" target="_blank" rel="noopener noreferrer" className="text-xs no-underline" style={{ color: 'rgba(255,255,255,.3)' }}>
+              ← Ver tienda ↗
             </Link>
           </div>
         </aside>

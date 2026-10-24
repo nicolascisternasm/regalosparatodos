@@ -1,11 +1,9 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAdminToken } from '@/app/admin/AdminAuthContext'
 import type { Caja } from '@/types'
-
-const CATEGORIAS = ['Cumpleaños', 'Parejas', 'Para ella', 'Para él', 'Bebé', 'Navidad', 'Graduación', 'Día de la Madre', 'Día del Padre', 'Otro']
 
 type Modo = 'nueva' | 'editar'
 
@@ -19,6 +17,16 @@ export default function CajaFormulario({ modo, inicial = {}, cajaId }: Props) {
   const token = useAdminToken()
   const router = useRouter()
   const fileRef = useRef<HTMLInputElement>(null)
+  const [categorias, setCategorias] = useState<string[]>([])
+
+  useEffect(() => {
+    if (!token) return
+    fetch('/api/admin/categorias', { headers: { Authorization: `Bearer ${token}` } })
+      .then((r) => r.json())
+      .then(({ categorias: cats }) => {
+        if (cats) setCategorias(cats.map((c: { nombre: string }) => c.nombre))
+      })
+  }, [token])
 
   const [form, setForm] = useState({
     nombre: inicial.nombre ?? '',
@@ -167,7 +175,7 @@ export default function CajaFormulario({ modo, inicial = {}, cajaId }: Props) {
           onChange={(e) => set('categoria', e.target.value)}
         >
           <option value="">— Seleccionar —</option>
-          {CATEGORIAS.map((c) => (
+          {categorias.map((c) => (
             <option key={c} value={c}>{c}</option>
           ))}
         </select>
