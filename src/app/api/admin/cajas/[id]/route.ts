@@ -34,6 +34,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (body.activo !== undefined)            campos.activo = Boolean(body.activo)
     if (body.orden !== undefined)             campos.orden = Number(body.orden)
     if (body.tipo !== undefined)              campos.tipo = body.tipo
+    if (body.precio_mayorista !== undefined)  campos.precio_mayorista = body.precio_mayorista ? Number(body.precio_mayorista) : null
 
     const { data, error } = await createAdminClient()
       .from('cajas')

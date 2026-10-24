@@ -28,6 +28,7 @@ export interface Caja {
   activo: boolean
   orden: number
   tipo: 'simple' | 'variantes'
+  precio_mayorista?: number
   created_at: string
 }
 
@@ -59,6 +60,7 @@ export interface ItemCarrito {
   caja: Caja
   cantidad: number
   variante?: Variante
+  precio_unitario_override?: number
 }
 
 export interface DatosComprador {

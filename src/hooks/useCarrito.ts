@@ -31,17 +31,19 @@ export function useCarrito() {
     setItems(leerStorage())
   }, [])
 
-  const agregarItem = useCallback((caja: Caja, variante?: Variante) => {
+  const agregarItem = useCallback((caja: Caja, variante?: Variante, opciones?: { cantidad?: number; precioOverride?: number }) => {
+    const cantidadAgregar = opciones?.cantidad ?? 1
+    const precioOverride = opciones?.precioOverride
     setItems((prev) => {
       const key = itemKey(caja.id, variante?.id)
       const existe = prev.find((i) => itemKey(i.caja.id, i.variante?.id) === key)
       const nuevos = existe
         ? prev.map((i) =>
             itemKey(i.caja.id, i.variante?.id) === key
-              ? { ...i, cantidad: i.cantidad + 1 }
+              ? { ...i, cantidad: i.cantidad + cantidadAgregar, ...(precioOverride !== undefined && { precio_unitario_override: precioOverride }) }
               : i
           )
-        : [...prev, { caja, variante, cantidad: 1 }]
+        : [...prev, { caja, variante, cantidad: cantidadAgregar, precio_unitario_override: precioOverride }]
       guardarStorage(nuevos)
       return nuevos
     })
@@ -77,7 +79,7 @@ export function useCarrito() {
   }, [])
 
   const subtotal = items.reduce(
-    (acc, i) => acc + (i.variante?.precio ?? i.caja.precio) * i.cantidad,
+    (acc, i) => acc + (i.precio_unitario_override ?? i.variante?.precio ?? i.caja.precio) * i.cantidad,
     0
   )
 

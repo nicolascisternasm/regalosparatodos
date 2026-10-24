@@ -94,7 +94,7 @@ export default function CarritoPage() {
           {paso === 'carrito' && (
             <div className="space-y-4">
               {items.map((item) => {
-                const precio = item.variante?.precio ?? item.caja.precio
+                const precio = item.precio_unitario_override ?? item.variante?.precio ?? item.caja.precio
                 const varId = item.variante?.id
                 return (
                   <div key={`${item.caja.id}:${varId ?? ''}`} className="flex items-center gap-4 p-4 rounded-2xl" style={{ background: 'var(--card)', border: '1.5px solid var(--border)' }}>

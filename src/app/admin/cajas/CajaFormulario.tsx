@@ -33,6 +33,7 @@ export default function CajaFormulario({ modo, inicial = {}, cajaId }: Props) {
     nombre: inicial.nombre ?? '',
     descripcion: inicial.descripcion ?? '',
     descripcion_corta: (inicial as Partial<Caja & { descripcion_corta?: string }>).descripcion_corta ?? '',
+    precio_mayorista: inicial.precio_mayorista?.toString() ?? '',
     categoria: inicial.categoria ?? '',
     precio: inicial.precio?.toString() ?? '',
     precio_original: inicial.precio_original?.toString() ?? '',
@@ -89,6 +90,7 @@ export default function CajaFormulario({ modo, inicial = {}, cajaId }: Props) {
         nombre: form.nombre,
         descripcion: form.descripcion,
         descripcion_corta: form.descripcion_corta || null,
+        precio_mayorista: form.precio_mayorista ? Number(form.precio_mayorista) : null,
         categoria: form.categoria,
         precio: form.tipo === 'simple' ? Number(form.precio) : (Number(form.precio) || 1000),
         precio_original: form.precio_original ? Number(form.precio_original) : null,
@@ -205,6 +207,24 @@ export default function CajaFormulario({ modo, inicial = {}, cajaId }: Props) {
             onChange={(e) => set('descripcion_corta', e.target.value)}
             placeholder="Ej: La graduación más especial, con tu peluche favorito"
           />
+        </div>
+      )}
+
+      {/* Precio mayorista (solo variantes) */}
+      {form.tipo === 'variantes' && (
+        <div style={{ marginBottom: 16 }}>
+          <label style={estiloLabel}>Precio por curso / mayorista (CLP)</label>
+          <input
+            type="number"
+            min="0"
+            style={{ ...estiloInput, maxWidth: 200 }}
+            value={form.precio_mayorista}
+            onChange={(e) => set('precio_mayorista', e.target.value)}
+            placeholder="Ej: 9990"
+          />
+          <p style={{ fontSize: 12, color: '#A06070', marginTop: 4 }}>
+            Si lo defines, aparece un checkbox en la ficha del producto para pedidos de curso (mín. 10 unidades).
+          </p>
         </div>
       )}
 

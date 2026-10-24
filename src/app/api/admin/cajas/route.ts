@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json()
-    const { nombre, descripcion, descripcion_corta, categoria, precio, precio_original, stock, emoji, imagen_url, activo, orden, tipo } = body
+    const { nombre, descripcion, descripcion_corta, categoria, precio, precio_original, precio_mayorista, stock, emoji, imagen_url, activo, orden, tipo } = body
 
     if (!nombre || !descripcion || !categoria) {
       return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400 })
@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
         categoria: categoria.trim(),
         precio: Number(precio ?? 1),
         precio_original: precio_original ? Number(precio_original) : null,
+        precio_mayorista: precio_mayorista ? Number(precio_mayorista) : null,
         stock: Number(stock ?? 0),
         emoji: emoji || '🎁',
         imagen_url: imagen_url || null,

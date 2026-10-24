@@ -27,7 +27,7 @@ export async function crearPedido(input: CrearPedidoInput): Promise<Pedido> {
   const { items, comprador, destinatario, despacho } = input
 
   const subtotal = items.reduce(
-    (acc, i) => acc + (i.variante?.precio ?? i.caja.precio) * i.cantidad,
+    (acc, i) => acc + (i.precio_unitario_override ?? i.variante?.precio ?? i.caja.precio) * i.cantidad,
     0
   )
   const total = subtotal + COSTO_DESPACHO
@@ -68,7 +68,7 @@ export async function crearPedido(input: CrearPedidoInput): Promise<Pedido> {
   if (pedidoError) throw pedidoError
 
   const itemsData = items.map((i) => {
-    const precioUnitario = i.variante?.precio ?? i.caja.precio
+    const precioUnitario = i.precio_unitario_override ?? i.variante?.precio ?? i.caja.precio
     return {
       pedido_id: pedido.id,
       caja_id: i.caja.id,
