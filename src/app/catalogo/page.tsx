@@ -200,6 +200,24 @@ function CajaCard({ caja, onAgregar }: { caja: Caja; onAgregar: () => void }) {
           {caja.descripcion}
         </p>
 
+        {/* Precio por curso (si tiene precio_mayorista) */}
+        {caja.precio_mayorista && (
+          <div
+            className="flex items-center gap-2 mb-3 px-3 py-2 rounded-xl"
+            style={{ background: 'linear-gradient(135deg, #FFF8E8 0%, #FFF0D0 100%)', border: '1px solid #F5D87A' }}
+          >
+            <span className="text-base">🎓</span>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-800 leading-none" style={{ color: '#A06000' }}>
+                Precio por curso
+              </p>
+              <p className="text-xs leading-tight mt-0.5" style={{ color: '#C08020' }}>
+                ${caja.precio_mayorista.toLocaleString('es-CL')} · ¡Aprovecha esta oferta!
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Precio + botón */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex flex-col">
@@ -218,7 +236,7 @@ function CajaCard({ caja, onAgregar }: { caja: Caja; onAgregar: () => void }) {
               className="px-4 py-2 rounded-full text-xs font-800 transition-all flex-shrink-0 no-underline"
               style={{ background: 'var(--dark-bg)', color: '#fff' }}
             >
-              Ver opciones →
+              Ver variantes →
             </Link>
           ) : (
             <button
