@@ -50,8 +50,9 @@ export default function AdminLoginPage() {
       })
       if (resetError) throw resetError
       setEnviado(true)
-    } catch {
-      setError('No se pudo enviar el correo. Verifica el email.')
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error desconocido'
+      setError(`No se pudo enviar el correo: ${msg}`)
     } finally {
       setLoading(false)
     }
