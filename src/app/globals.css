@@ -1,13 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --bg:     #FFF0F3;
-  --fg:     #2B0A1A;
-  --gold:   #FF6B8A;
-  --red:    #FF9F45;
-  --card:   #FFFFFF;
-  --muted:  #A06070;
-  --border: #F5D5DE;
+  --bg:        #FAFAFA;
+  --bg-soft:   #FFF5F7;
+  --fg:        #1A0A10;
+  --fg-light:  #2B0A1A;
+  --gold:      #FF6B8A;
+  --gold-dark: #E0506F;
+  --orange:    #FF9F45;
+  --card:      #FFFFFF;
+  --muted:     #8A6070;
+  --muted2:    #B08090;
+  --border:    #F0D8E0;
+  --dark-bg:   #1A0A10;
+  --dark-card: #2A141C;
 }
 
 * {
@@ -23,4 +29,59 @@ body {
   color: var(--fg);
   font-family: var(--font-nunito), system-ui, sans-serif;
   overflow-x: hidden;
+}
+
+/* ============================
+   TICKER ANIMATION
+   ============================ */
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker 24s linear infinite;
+}
+
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+/* ============================
+   RADIAL HERO PATTERN
+   ============================ */
+.radial-rings {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 65% 50%, transparent 20%, rgba(255,107,138,.06) 20.5%, transparent 21%),
+    radial-gradient(circle at 65% 50%, transparent 30%, rgba(255,107,138,.05) 30.5%, transparent 31%),
+    radial-gradient(circle at 65% 50%, transparent 40%, rgba(255,107,138,.04) 40.5%, transparent 41%),
+    radial-gradient(circle at 65% 50%, transparent 50%, rgba(255,107,138,.03) 50.5%, transparent 51%),
+    radial-gradient(circle at 65% 50%, transparent 60%, rgba(255,107,138,.03) 60.5%, transparent 61%),
+    radial-gradient(circle at 65% 50%, transparent 70%, rgba(255,107,138,.02) 70.5%, transparent 71%),
+    radial-gradient(circle at 65% 50%, transparent 80%, rgba(255,107,138,.02) 80.5%, transparent 81%);
+  pointer-events: none;
+}
+
+/* ============================
+   FADE REVEAL ANIMATION
+   ============================ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up {
+  animation: fadeUp 0.6s ease both;
+}
+
+/* ============================
+   REDUCED MOTION
+   ============================ */
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track  { animation: none; }
+  .fade-up       { animation: none; }
 }
