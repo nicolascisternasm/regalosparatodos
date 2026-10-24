@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { listarPedidos } from '@/lib/pedidos'
 import type { EstadoComercial } from '@/types'
+import { verificarAdminAuth } from '@/lib/adminAuth'
 
-function verificarAdmin(req: NextRequest): boolean {
-  const token = req.headers.get('x-admin-token')
-  return token === process.env.ADMIN_SECRET_TOKEN
+async function verificarAdmin(req: NextRequest): Promise<boolean> {
+  const result = await verificarAdminAuth(req)
+  return result.ok
 }
 
 export async function GET(req: NextRequest) {
-  if (!verificarAdmin(req)) {
+  if (!await verificarAdmin(req)) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   }
 

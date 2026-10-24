@@ -6,8 +6,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import type { Pedido, EstadoComercial } from '@/types'
 import { LABEL_ESTADO_COMERCIAL } from '@/types'
-
-const ADMIN_TOKEN = process.env.NEXT_PUBLIC_ADMIN_TOKEN ?? ''
+import { useAdminToken } from '@/app/admin/AdminAuthContext'
 
 const COLORES: Record<EstadoComercial, { bg: string; color: string }> = {
   pendiente_confirmacion: { bg: '#FFF3CD', color: '#856404' },
@@ -26,16 +25,18 @@ const FILTROS: Array<{ label: string; value: EstadoComercial | 'todos' }> = [
 ]
 
 export default function PedidosPage() {
+  const token = useAdminToken()
   const [pedidos, setPedidos] = useState<Pedido[]>([])
   const [total, setTotal] = useState(0)
   const [cargando, setCargando] = useState(true)
   const [filtro, setFiltro] = useState<EstadoComercial | 'todos'>('todos')
 
   useEffect(() => {
+    if (!token) return
     setCargando(true)
     const params = filtro !== 'todos' ? `&estado=${filtro}` : ''
     fetch(`/api/admin/pedidos?limit=100${params}`, {
-      headers: { 'x-admin-token': ADMIN_TOKEN },
+      headers: { Authorization: `Bearer ${token}` },
     })
       .then((r) => r.json())
       .then(({ pedidos, total }) => { setPedidos(pedidos ?? []); setTotal(total ?? 0) })

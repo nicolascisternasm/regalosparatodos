@@ -6,8 +6,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import type { Pedido, EstadoComercial } from '@/types'
 import { LABEL_ESTADO_COMERCIAL } from '@/types'
-
-const ADMIN_TOKEN = process.env.NEXT_PUBLIC_ADMIN_TOKEN ?? ''
+import { useAdminToken } from '@/app/admin/AdminAuthContext'
 
 const COLORES_ESTADO: Record<EstadoComercial, { bg: string; color: string }> = {
   pendiente_confirmacion: { bg: '#FFF3CD', color: '#856404' },
@@ -18,13 +17,15 @@ const COLORES_ESTADO: Record<EstadoComercial, { bg: string; color: string }> = {
 }
 
 export default function AdminDashboard() {
+  const token = useAdminToken()
   const [pedidos, setPedidos] = useState<Pedido[]>([])
   const [total, setTotal] = useState(0)
   const [cargando, setCargando] = useState(true)
 
   useEffect(() => {
+    if (!token) return
     fetch('/api/admin/pedidos?limit=20', {
-      headers: { 'x-admin-token': ADMIN_TOKEN },
+      headers: { Authorization: `Bearer ${token}` },
     })
       .then((r) => r.json())
       .then(({ pedidos, total }) => {

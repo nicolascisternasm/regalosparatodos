@@ -856,7 +856,17 @@ export default function Home() {
             style={{ marginTop: 48, paddingTop: 24, borderTop: '1px solid var(--border)' }}
           >
             <p style={{ fontSize: 13, color: 'var(--fg-muted)' }}>© 2024 RegalosParaTodos. Todos los derechos reservados.</p>
-            <p style={{ fontSize: 13, color: 'var(--fg-muted)' }}>Talagante, Región Metropolitana · Chile 🇨🇱</p>
+            <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+              <p style={{ fontSize: 13, color: 'var(--fg-muted)' }}>Talagante, Región Metropolitana · Chile 🇨🇱</p>
+              <a
+                href="/admin"
+                style={{ fontSize: 12, color: 'var(--fg-muted)', textDecoration: 'none', opacity: 0.5 }}
+                onMouseEnter={(e) => { e.currentTarget.style.opacity = '1' }}
+                onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.5' }}
+              >
+                Administración
+              </a>
+            </div>
           </div>
         </div>
       </footer>
@@ -907,9 +917,17 @@ function ProductCard({ caja }: { caja: Caja }) {
             -{descuento}%
           </span>
         )}
-        <span style={{ fontSize: 80, transition: 'transform .3s' }} role="img" aria-label={caja.nombre}>
-          {caja.emoji}
-        </span>
+        {caja.imagen_url ? (
+          <img
+            src={caja.imagen_url}
+            alt={caja.nombre}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }}
+          />
+        ) : (
+          <span style={{ fontSize: 80, transition: 'transform .3s' }} role="img" aria-label={caja.nombre}>
+            {caja.emoji}
+          </span>
+        )}
       </div>
 
       <div style={{ padding: '20px' }}>

@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { aprobarPago, rechazarPago } from '@/lib/pedidos'
-
-function verificarAdmin(req: NextRequest): boolean {
-  const token = req.headers.get('x-admin-token')
-  return token === process.env.ADMIN_SECRET_TOKEN
-}
+import { verificarAdminAuth } from '@/lib/adminAuth'
 
 export async function POST(req: NextRequest) {
-  if (!verificarAdmin(req)) {
+  const auth = await verificarAdminAuth(req)
+  if (!auth.ok) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   }
 

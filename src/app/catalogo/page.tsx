@@ -171,13 +171,21 @@ function CajaCard({ caja, onAgregar }: { caja: Caja; onAgregar: () => void }) {
           </span>
         )}
 
-        <span
-          className="text-8xl transition-transform duration-300 group-hover:scale-110 inline-block"
-          role="img"
-          aria-label={caja.nombre}
-        >
-          {caja.emoji}
-        </span>
+        {caja.imagen_url ? (
+          <img
+            src={caja.imagen_url}
+            alt={caja.nombre}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <span
+            className="text-8xl transition-transform duration-300 group-hover:scale-110 inline-block"
+            role="img"
+            aria-label={caja.nombre}
+          >
+            {caja.emoji}
+          </span>
+        )}
       </div>
 
       {/* Info */}

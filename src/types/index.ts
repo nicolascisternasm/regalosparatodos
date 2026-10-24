@@ -23,6 +23,7 @@ export interface Caja {
   emoji: string
   categoria: string
   imagen_url?: string
+  stock?: number
   activo: boolean
   orden: number
   created_at: string
