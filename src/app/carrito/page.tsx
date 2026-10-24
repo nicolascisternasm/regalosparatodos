@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useCarrito } from '@/hooks/useCarrito'
@@ -12,7 +14,8 @@ const COSTO_DESPACHO = 4990
 export default function CarritoPage() {
   const { items, reducirItem, agregarItem, eliminarItem, subtotal, vaciarCarrito } = useCarrito()
   const router = useRouter()
-  const [paso, setPaso] = useState<'carrito' | 'datos' | 'confirmando'>('carrito')
+  const [paso, setPaso] = useState<'carrito' | 'datos'>('carrito')
+  const [confirmando, setConfirmando] = useState(false)
   const [error, setError] = useState('')
 
   const [comprador, setComprador] = useState<DatosComprador>({ nombre: '', email: '', telefono: '' })
@@ -25,7 +28,7 @@ export default function CarritoPage() {
 
   async function confirmarPedido() {
     setError('')
-    setPaso('confirmando')
+    setConfirmando(true)
 
     try {
       const res = await fetch('/api/pedidos', {
@@ -42,7 +45,7 @@ export default function CarritoPage() {
       router.push(`/pedido/${pedido.id}`)
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Error inesperado')
-      setPaso('datos')
+      setConfirmando(false)
     }
   }
 
@@ -211,8 +214,8 @@ export default function CarritoPage() {
                 <button onClick={() => setPaso('carrito')} className="flex-1 py-4 rounded-full font-700" style={{ border: '1.5px solid var(--border)', color: 'var(--fg)', background: 'var(--card)' }}>
                   ← Volver
                 </button>
-                <button onClick={confirmarPedido} disabled={paso === 'confirmando'} className="flex-1 py-4 rounded-full font-800" style={{ background: 'var(--gold)', color: '#fff', opacity: paso === 'confirmando' ? 0.7 : 1 }}>
-                  {paso === 'confirmando' ? 'Procesando…' : 'Confirmar pedido →'}
+                <button onClick={confirmarPedido} disabled={confirmando} className="flex-1 py-4 rounded-full font-800" style={{ background: 'var(--gold)', color: '#fff', opacity: confirmando ? 0.7 : 1 }}>
+                  {confirmando ? 'Procesando…' : 'Confirmar pedido →'}
                 </button>
               </div>
             </div>
