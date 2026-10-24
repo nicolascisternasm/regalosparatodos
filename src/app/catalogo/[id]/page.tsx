@@ -111,7 +111,7 @@ export default function FichaProductoPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
 
             {/* Galería */}
-            <div className="sticky top-24">
+            <div className="md:sticky top-24">
               {/* Foto principal */}
               <div
                 className="rounded-2xl overflow-hidden mb-3"
@@ -224,13 +224,13 @@ export default function FichaProductoPage() {
                                   <button
                                     type="button"
                                     onClick={() => setCantidadesCurso((prev) => ({ ...prev, [v.id]: Math.max(0, (prev[v.id] ?? 0) - 1) }))}
-                                    style={{ width: 26, height: 26, borderRadius: '50%', border: '1.5px solid var(--border)', background: '#fff', cursor: 'pointer', fontWeight: 700, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--fg)', flexShrink: 0 }}
+                                    style={{ width: 32, height: 32, borderRadius: '50%', border: '1.5px solid var(--border)', background: '#fff', cursor: 'pointer', fontWeight: 700, fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--fg)', flexShrink: 0 }}
                                   >−</button>
-                                  <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--fg)', minWidth: 18, textAlign: 'center' }}>{qtyCurso}</span>
+                                  <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--fg)', minWidth: 22, textAlign: 'center' }}>{qtyCurso}</span>
                                   <button
                                     type="button"
                                     onClick={() => setCantidadesCurso((prev) => ({ ...prev, [v.id]: (prev[v.id] ?? 0) + 1 }))}
-                                    style={{ width: 26, height: 26, borderRadius: '50%', border: '1.5px solid var(--border)', background: '#fff', cursor: 'pointer', fontWeight: 700, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--fg)', flexShrink: 0 }}
+                                    style={{ width: 32, height: 32, borderRadius: '50%', border: '1.5px solid var(--border)', background: '#fff', cursor: 'pointer', fontWeight: 700, fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--fg)', flexShrink: 0 }}
                                   >+</button>
                                 </div>
                               )}

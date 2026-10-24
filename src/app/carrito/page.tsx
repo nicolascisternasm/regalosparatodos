@@ -97,22 +97,26 @@ export default function CarritoPage() {
                 const precio = item.precio_unitario_override ?? item.variante?.precio ?? item.caja.precio
                 const varId = item.variante?.id
                 return (
-                  <div key={`${item.caja.id}:${varId ?? ''}`} className="flex items-center gap-4 p-4 rounded-2xl" style={{ background: 'var(--card)', border: '1.5px solid var(--border)' }}>
-                    <div className="text-3xl">{item.caja.emoji}</div>
-                    <div className="flex-1">
-                      <p className="font-700" style={{ color: 'var(--fg)' }}>{item.caja.nombre}</p>
-                      {item.variante && (
-                        <p className="text-xs font-600" style={{ color: 'var(--orange)' }}>{item.variante.nombre}{item.variante.sku ? ` · ${item.variante.sku}` : ''}</p>
-                      )}
-                      <p className="text-sm" style={{ color: 'var(--muted)' }}>${precio.toLocaleString('es-CL')} c/u</p>
+                  <div key={`${item.caja.id}:${varId ?? ''}`} className="p-4 rounded-2xl" style={{ background: 'var(--card)', border: '1.5px solid var(--border)' }}>
+                    <div className="flex items-start gap-3">
+                      <div className="text-3xl flex-shrink-0">{item.caja.emoji}</div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-700 truncate" style={{ color: 'var(--fg)' }}>{item.caja.nombre}</p>
+                        {item.variante && (
+                          <p className="text-xs font-600" style={{ color: 'var(--orange)' }}>{item.variante.nombre}{item.variante.sku ? ` · ${item.variante.sku}` : ''}</p>
+                        )}
+                        <p className="text-sm" style={{ color: 'var(--muted)' }}>${precio.toLocaleString('es-CL')} c/u</p>
+                      </div>
+                      <button onClick={() => eliminarItem(item.caja.id, varId)} className="text-sm flex-shrink-0" style={{ color: 'var(--muted)' }}>✕</button>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => reducirItem(item.caja.id, varId)} className="w-8 h-8 rounded-full font-700 flex items-center justify-center" style={{ border: '1.5px solid var(--border)' }}>-</button>
-                      <span className="font-700 w-6 text-center" style={{ color: 'var(--fg)' }}>{item.cantidad}</span>
-                      <button onClick={() => agregarItem(item.caja, item.variante)} className="w-8 h-8 rounded-full font-700 flex items-center justify-center" style={{ border: '1.5px solid var(--border)' }}>+</button>
+                    <div className="flex items-center justify-between mt-3">
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => reducirItem(item.caja.id, varId)} className="w-8 h-8 rounded-full font-700 flex items-center justify-center" style={{ border: '1.5px solid var(--border)' }}>-</button>
+                        <span className="font-700 w-6 text-center" style={{ color: 'var(--fg)' }}>{item.cantidad}</span>
+                        <button onClick={() => agregarItem(item.caja, item.variante)} className="w-8 h-8 rounded-full font-700 flex items-center justify-center" style={{ border: '1.5px solid var(--border)' }}>+</button>
+                      </div>
+                      <p className="font-800" style={{ color: 'var(--fg)' }}>${(precio * item.cantidad).toLocaleString('es-CL')}</p>
                     </div>
-                    <p className="font-800 w-20 text-right" style={{ color: 'var(--fg)' }}>${(precio * item.cantidad).toLocaleString('es-CL')}</p>
-                    <button onClick={() => eliminarItem(item.caja.id, varId)} className="text-sm" style={{ color: 'var(--muted)' }}>✕</button>
                   </div>
                 )
               })}

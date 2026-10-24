@@ -144,10 +144,10 @@ export default function Home() {
             </p>
             <h1
               style={{
-                fontSize: 60,
+                fontSize: 'clamp(28px, 6vw, 60px)',
                 fontWeight: 300,
                 color: 'var(--fg)',
-                lineHeight: '80px',
+                lineHeight: 1.15,
                 marginBottom: 0,
               }}
             >
@@ -155,10 +155,10 @@ export default function Home() {
             </h1>
             <h1
               style={{
-                fontSize: 80,
+                fontSize: 'clamp(36px, 8vw, 80px)',
                 fontWeight: 700,
                 color: 'var(--fg)',
-                lineHeight: '80px',
+                lineHeight: 1.1,
                 marginBottom: 32,
               }}
             >
@@ -304,6 +304,7 @@ export default function Home() {
               <Link
                 key={cat.label}
                 href={cat.href}
+                className="cat-item"
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -339,7 +340,7 @@ export default function Home() {
       {/* =============================================
           FEATURES — 3 columns: features | product | features
           ============================================= */}
-      <section style={{ background: '#fff', padding: '100px 24px' }}>
+      <section className="section-padding" style={{ background: '#fff', padding: '100px 24px' }}>
         <div
           className="features-grid"
           style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 48, alignItems: 'center' }}
@@ -372,7 +373,7 @@ export default function Home() {
           </div>
 
           {/* Center product */}
-          <div className="flex items-center justify-center" style={{ position: 'relative' }}>
+          <div className="features-center flex items-center justify-center" style={{ position: 'relative' }}>
             <div
               style={{
                 width: 260,
@@ -459,6 +460,7 @@ export default function Home() {
           ============================================= */}
       <section
         id="nosotros"
+        className="section-padding"
         style={{
           background: 'var(--dark-bg)',
           padding: '100px 24px',
@@ -558,7 +560,7 @@ export default function Home() {
           </div>
 
           {/* Stats */}
-          <div className="flex justify-center flex-wrap gap-16" style={{ marginTop: 72 }}>
+          <div className="flex justify-center flex-wrap" style={{ marginTop: 72, gap: 'clamp(24px, 5vw, 64px)' }}>
             {[
               { num: '+200', label: 'Pedidos enviados' },
               { num: '100%', label: 'Armado a mano' },
@@ -576,12 +578,12 @@ export default function Home() {
       {/* =============================================
           PRODUCT GRID
           ============================================= */}
-      <section style={{ background: '#fff', padding: '100px 24px' }}>
+      <section className="section-padding" style={{ background: '#fff', padding: '100px 24px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div className="flex items-end justify-between flex-wrap gap-4" style={{ marginBottom: 48 }}>
             <div>
               <p className="section-label">Nuestras cajas</p>
-              <h2 style={{ fontSize: 44, fontWeight: 700, color: 'var(--fg)', lineHeight: '61.6px', marginBottom: 12 }}>Elige tu caja perfecta</h2>
+              <h2 style={{ fontSize: 'clamp(26px, 5vw, 44px)', fontWeight: 700, color: 'var(--fg)', lineHeight: 1.4, marginBottom: 12 }}>Elige tu caja perfecta</h2>
               <p className="section-desc">
                 Todas armadas a mano y despachadas desde Talagante vía Starken.
               </p>
@@ -622,7 +624,7 @@ export default function Home() {
       {/* =============================================
           CÓMO FUNCIONA
           ============================================= */}
-      <section id="como-funciona" style={{ background: 'var(--bg-soft)', padding: '100px 24px' }}>
+      <section id="como-funciona" className="section-padding" style={{ background: 'var(--bg-soft)', padding: '100px 24px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div className="text-center" style={{ marginBottom: 64 }}>
             <p className="section-label">Simple y sin complicaciones</p>
@@ -686,7 +688,7 @@ export default function Home() {
       {/* =============================================
           TESTIMONIALS
           ============================================= */}
-      <section style={{ background: '#fff', padding: '100px 24px' }}>
+      <section className="section-padding" style={{ background: '#fff', padding: '100px 24px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <div className="text-center" style={{ marginBottom: 48 }}>
             <p className="section-label">Testimonios</p>
@@ -722,6 +724,7 @@ export default function Home() {
           DARK CTA
           ============================================= */}
       <section
+        className="section-padding"
         style={{ background: 'var(--dark-bg)', padding: '100px 24px', position: 'relative', overflow: 'hidden' }}
       >
         <div
@@ -837,7 +840,7 @@ export default function Home() {
               <p style={{ fontSize: 13, color: 'var(--fg-muted)', marginBottom: 16, lineHeight: 1.6 }}>
                 Recibe novedades y descuentos antes que nadie.
               </p>
-              <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
+              <form className="footer-form flex gap-2" onSubmit={(e) => e.preventDefault()}>
                 <input
                   type="email"
                   placeholder="tu@email.com"
@@ -873,12 +876,25 @@ export default function Home() {
 
       <style>{`
         @media (max-width: 768px) {
-          .hero-grid { grid-template-columns: 1fr !important; }
+          .hero-grid {
+            grid-template-columns: 1fr !important;
+            min-height: auto !important;
+            padding-top: 40px !important;
+            padding-bottom: 40px !important;
+          }
           .features-grid { grid-template-columns: 1fr !important; }
           .footer-grid { grid-template-columns: 1fr 1fr !important; }
+          .features-center { display: none !important; }
+          .hero-padding { padding: 40px 0 !important; }
+          .section-padding { padding-top: 60px !important; padding-bottom: 60px !important; }
         }
         @media (max-width: 480px) {
           .footer-grid { grid-template-columns: 1fr !important; }
+          .footer-form { flex-direction: column !important; }
+          .footer-form input { width: 100% !important; }
+          .footer-form button { width: 100% !important; justify-content: center; }
+          .cat-item { padding: 14px 18px !important; }
+          .hero-dots { margin-top: 24px !important; }
         }
       `}</style>
     </>

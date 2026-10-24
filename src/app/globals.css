@@ -157,7 +157,7 @@ body {
 }
 
 .section-title {
-  font-size: 40px;
+  font-size: clamp(24px, 5vw, 40px);
   font-weight: 700;
   color: var(--fg);
   line-height: 1.4;
@@ -165,7 +165,7 @@ body {
 }
 
 .section-desc {
-  font-size: 16px;
+  font-size: clamp(14px, 2vw, 16px);
   font-weight: 400;
   color: var(--fg-muted);
   line-height: 2;

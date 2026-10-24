@@ -42,7 +42,7 @@ export default function Nav({ cantidadCarrito = 0 }: NavProps) {
     >
       <div
         className="flex items-center justify-between"
-        style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', height: 72 }}
+        style={{ maxWidth: 1200, margin: '0 auto', padding: '0 clamp(12px, 4vw, 24px)', height: 72 }}
       >
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
@@ -61,7 +61,7 @@ export default function Nav({ cantidadCarrito = 0 }: NavProps) {
           >
             🎁
           </span>
-          <span style={{ fontWeight: 700, fontSize: 18, color: 'var(--fg)', letterSpacing: '-0.02em' }}>
+          <span style={{ fontWeight: 700, fontSize: 'clamp(14px, 4vw, 18px)', color: 'var(--fg)', letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>
             <span style={{ fontWeight: 800 }}>Regalos</span>
             <span style={{ color: 'var(--green)', fontWeight: 700 }}>ParaTodos</span>
           </span>
@@ -226,9 +226,11 @@ export default function Nav({ cantidadCarrito = 0 }: NavProps) {
           </Link>
 
           {/* Contact Us button */}
-          <Link href="/catalogo" className="hidden md:flex btn-dark">
-            Ver Cajas
-          </Link>
+          <span className="hidden md:flex">
+            <Link href="/catalogo" className="btn-dark">
+              Ver Cajas
+            </Link>
+          </span>
 
           {/* Mobile hamburger */}
           <button
@@ -259,12 +261,33 @@ export default function Nav({ cantidadCarrito = 0 }: NavProps) {
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
-              style={{ display: 'block', padding: '10px 0', fontSize: 15, fontWeight: 500, color: 'var(--fg)', textDecoration: 'none', borderBottom: '1px solid var(--border-soft)' }}
+              style={{ display: 'block', padding: '12px 0', fontSize: 15, fontWeight: 500, color: 'var(--fg)', textDecoration: 'none', borderBottom: '1px solid var(--border-soft)' }}
             >
               {link.label}
             </Link>
           ))}
-          <Link href="/catalogo" className="btn-dark" style={{ marginTop: 16, display: 'inline-flex' }} onClick={() => setMenuOpen(false)}>
+          {/* Colecciones en mobile */}
+          <div style={{ marginTop: 8, marginBottom: 4 }}>
+            <p style={{ fontSize: 12, fontWeight: 600, color: 'var(--fg-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '8px 0 6px' }}>Colecciones</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+              {COLECCIONES.map((col) => (
+                <Link
+                  key={col.label}
+                  href={col.href}
+                  onClick={() => setMenuOpen(false)}
+                  style={{
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                    padding: '10px 8px', borderRadius: 10, background: col.color,
+                    textDecoration: 'none', fontSize: 12, fontWeight: 600, color: 'var(--fg)',
+                  }}
+                >
+                  <span style={{ fontSize: 22 }}>{col.emoji}</span>
+                  {col.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <Link href="/catalogo" className="btn-dark" style={{ marginTop: 16, display: 'flex', justifyContent: 'center' }} onClick={() => setMenuOpen(false)}>
             Ver Cajas
           </Link>
         </div>

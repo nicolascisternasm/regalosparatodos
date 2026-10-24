@@ -33,7 +33,7 @@ export default function CatalogoPage() {
 
         {/* Header del catálogo */}
         <div
-          className="pt-24 pb-14 px-6"
+          className="pt-24 pb-10 px-4 md:px-6"
           style={{ background: 'var(--dark-bg)' }}
         >
           <div className="max-w-6xl mx-auto">
@@ -41,26 +41,26 @@ export default function CatalogoPage() {
               Catálogo
             </p>
             <h1
-              style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 700, color: '#fff', marginBottom: 12, letterSpacing: '-0.02em' }}
+              style={{ fontSize: 'clamp(26px, 5vw, 52px)', fontWeight: 700, color: '#fff', marginBottom: 12, letterSpacing: '-0.02em' }}
             >
               Elige tu caja perfecta
             </h1>
-            <p style={{ color: 'rgba(255,255,255,.5)', fontSize: 16 }}>
+            <p style={{ color: 'rgba(255,255,255,.5)', fontSize: 'clamp(13px, 2vw, 16px)' }}>
               Todas las cajas se arman y despachan desde Talagante vía Starken.
             </p>
           </div>
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 py-12">
+        <div className="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-12">
 
           {/* Filtros + controles */}
-          <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+          <div className="flex flex-col gap-3 mb-6">
             <div className="flex gap-2 flex-wrap">
               {categorias.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setCategoriaActiva(cat)}
-                  className="px-5 py-2 text-sm transition-all"
+                  className="px-4 py-2 text-sm transition-all"
                   style={{
                     background: categoriaActiva === cat ? 'var(--dark-bg)' : '#fff',
                     color: categoriaActiva === cat ? '#fff' : 'var(--fg)',
@@ -68,18 +68,16 @@ export default function CatalogoPage() {
                     borderRadius: 100,
                     fontWeight: 600,
                     cursor: 'pointer',
-                    fontSize: 14,
+                    fontSize: 13,
                   }}
                 >
                   {cat}
                 </button>
               ))}
             </div>
-
-            {/* Controles de orden y contador */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
               {!cargando && (
-                <p style={{ fontSize: 13, color: 'var(--muted)', whiteSpace: 'nowrap' }}>
+                <p style={{ fontSize: 13, color: 'var(--muted)' }}>
                   {cajasFiltradas.length} {cajasFiltradas.length === 1 ? 'resultado' : 'resultados'}
                 </p>
               )}
