@@ -73,13 +73,13 @@ const SLIDES = [
     subtitle: 'Despacho rápido a todo Chile',
     title1: 'El regalo perfecto',
     title2: 'para cada momento',
-    emoji: '🎁',
+    image: '/hero-caja.jpg',
   },
   {
     subtitle: 'Armado con cariño, entregado con amor',
     title1: 'Sorprende a quien',
     title2: 'más quieres',
-    emoji: '🎀',
+    image: '/hero-caja-2.jpg',
   },
 ]
 
@@ -240,7 +240,7 @@ export default function Home() {
                 }}
               >
                 <img
-                  src="/hero-caja.jpg"
+                  src={slide.image}
                   alt="Caja de regalo premium"
                   style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
                 />
