@@ -19,6 +19,7 @@ export default function CarritoPage() {
   const [error, setError] = useState('')
 
   const [comprador, setComprador] = useState<DatosComprador>({ nombre: '', email: '', telefono: '' })
+  const [esRegalo, setEsRegalo] = useState(false)
   const [destinatario, setDestinatario] = useState<DatosDestinatario>({ nombre: '', telefono: '', mensaje_tarjeta: '' })
   const [despacho, setDespacho] = useState<DatosDespacho>({ tipo: 'domicilio', region: '', ciudad: '', direccion: '', numero: '' })
 
@@ -30,11 +31,16 @@ export default function CarritoPage() {
     setError('')
     setConfirmando(true)
 
+    // Si no es regalo, el destinatario es el mismo comprador
+    const destinatarioFinal: DatosDestinatario = esRegalo
+      ? destinatario
+      : { nombre: comprador.nombre, telefono: comprador.telefono, mensaje_tarjeta: '' }
+
     try {
       const res = await fetch('/api/pedidos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items, comprador, destinatario, despacho }),
+        body: JSON.stringify({ items, comprador, destinatario: destinatarioFinal, despacho }),
       })
 
       const data = await res.json()
@@ -161,25 +167,44 @@ export default function CarritoPage() {
                 </div>
               </div>
 
-              {/* Datos destinatario */}
-              <div className="rounded-2xl p-5" style={{ background: 'var(--card)', border: '1.5px solid var(--border)' }}>
-                <h3 className="font-800 mb-4" style={{ color: 'var(--fg)' }}>¿A quién va dirigido?</h3>
-                <div className="space-y-3">
-                  <Input label="Nombre del destinatario" value={destinatario.nombre} onChange={(v) => setDestinatario({ ...destinatario, nombre: v })} />
-                  <Input label="Teléfono del destinatario" type="tel" value={destinatario.telefono} onChange={(v) => setDestinatario({ ...destinatario, telefono: v })} placeholder="+56 9 xxxx xxxx" />
-                  <div>
-                    <label className="block text-sm font-600 mb-1" style={{ color: 'var(--muted)' }}>Mensaje para la tarjeta (opcional)</label>
-                    <textarea
-                      value={destinatario.mensaje_tarjeta}
-                      onChange={(e) => setDestinatario({ ...destinatario, mensaje_tarjeta: e.target.value })}
-                      rows={3}
-                      className="w-full rounded-xl px-4 py-3 text-sm outline-none resize-none"
-                      style={{ border: '1.5px solid var(--border)', color: 'var(--fg)', background: 'var(--bg)' }}
-                      placeholder="Ej: Feliz cumpleaños, te quiero mucho!"
-                    />
+              {/* Checkbox ¿es para regalo? */}
+              <label
+                className="flex items-center gap-3 p-4 rounded-2xl cursor-pointer"
+                style={{ background: esRegalo ? '#FFF0F3' : 'var(--card)', border: `1.5px solid ${esRegalo ? 'var(--gold)' : 'var(--border)'}`, transition: 'all .2s' }}
+              >
+                <input
+                  type="checkbox"
+                  checked={esRegalo}
+                  onChange={(e) => setEsRegalo(e.target.checked)}
+                  style={{ width: 20, height: 20, accentColor: 'var(--gold)', cursor: 'pointer' }}
+                />
+                <div>
+                  <p className="font-700" style={{ color: 'var(--fg)' }}>🎁 ¿Es para regalo?</p>
+                  <p className="text-xs" style={{ color: 'var(--muted)' }}>Activa esto si el pedido va a otra persona</p>
+                </div>
+              </label>
+
+              {/* Datos destinatario — solo si es regalo */}
+              {esRegalo && (
+                <div className="rounded-2xl p-5" style={{ background: 'var(--card)', border: '1.5px solid var(--border)' }}>
+                  <h3 className="font-800 mb-4" style={{ color: 'var(--fg)' }}>¿A quién va dirigido?</h3>
+                  <div className="space-y-3">
+                    <Input label="Nombre del destinatario" value={destinatario.nombre} onChange={(v) => setDestinatario({ ...destinatario, nombre: v })} />
+                    <Input label="Teléfono del destinatario" type="tel" value={destinatario.telefono} onChange={(v) => setDestinatario({ ...destinatario, telefono: v })} placeholder="+56 9 xxxx xxxx" />
+                    <div>
+                      <label className="block text-sm font-600 mb-1" style={{ color: 'var(--muted)' }}>Mensaje para la tarjeta (opcional)</label>
+                      <textarea
+                        value={destinatario.mensaje_tarjeta}
+                        onChange={(e) => setDestinatario({ ...destinatario, mensaje_tarjeta: e.target.value })}
+                        rows={3}
+                        className="w-full rounded-xl px-4 py-3 text-sm outline-none resize-none"
+                        style={{ border: '1.5px solid var(--border)', color: 'var(--fg)', background: 'var(--bg)' }}
+                        placeholder="Ej: Feliz cumpleaños, te quiero mucho!"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Despacho */}
               <div className="rounded-2xl p-5" style={{ background: 'var(--card)', border: '1.5px solid var(--border)' }}>

@@ -12,8 +12,13 @@ export async function POST(req: NextRequest) {
     if (!body.comprador?.nombre || !body.comprador?.email || !body.comprador?.telefono) {
       return NextResponse.json({ error: 'Datos del comprador incompletos' }, { status: 400 })
     }
+    // Si no viene destinatario, usar datos del comprador (pedido para uno mismo)
     if (!body.destinatario?.nombre) {
-      return NextResponse.json({ error: 'Datos del destinatario incompletos' }, { status: 400 })
+      body.destinatario = {
+        nombre: body.comprador.nombre,
+        telefono: body.comprador.telefono,
+        mensaje_tarjeta: '',
+      }
     }
 
     const pedido = await crearPedido(body)
