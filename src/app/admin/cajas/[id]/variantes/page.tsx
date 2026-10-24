@@ -49,7 +49,6 @@ export default function VariantesAdminPage() {
     ])
     const [{ caja: c }, { variantes: vs }] = await Promise.all([resCaja.json(), resVar.json()])
     if (!c) { router.replace('/admin/cajas'); return }
-    if (c.tipo !== 'variantes') { router.replace(`/admin/cajas/${cajaId}/editar`); return }
     setCaja(c)
     setVariantes(vs ?? [])
     setCargando(false)
@@ -184,6 +183,31 @@ export default function VariantesAdminPage() {
 
   if (cargando) return <div style={{ padding: '3rem', color: '#A06070' }}>Cargando…</div>
   if (!caja) return null
+
+  if (caja.tipo !== 'variantes') {
+    return (
+      <div style={{ maxWidth: 560 }}>
+        <Link href="/admin/cajas" style={{ fontSize: 13, color: '#A06070', textDecoration: 'none' }}>← Volver a cajas</Link>
+        <div style={{ marginTop: 24, background: '#FFF3CD', border: '1.5px solid #FFEAA7', borderRadius: 16, padding: 24 }}>
+          <p style={{ fontSize: 16, fontWeight: 700, color: '#856404', marginBottom: 8 }}>Este producto no tiene variantes activas</p>
+          <p style={{ fontSize: 14, color: '#856404', marginBottom: 16 }}>
+            El tipo actual del producto es <strong>{caja.tipo ?? 'no definido'}</strong>.
+            Para usar variantes, necesitas:
+          </p>
+          <ol style={{ fontSize: 14, color: '#856404', paddingLeft: 20, lineHeight: 1.8 }}>
+            <li>Aplicar la migración SQL en <strong>Supabase SQL Editor</strong> (archivo <code>docs/migracion_variantes.sql</code>)</li>
+            <li>O editar el producto y cambiar el tipo a &quot;Con variantes&quot; y guardar</li>
+          </ol>
+          <div style={{ marginTop: 16, display: 'flex', gap: 10 }}>
+            <Link href={`/admin/cajas/${cajaId}/editar`}
+              style={{ padding: '9px 18px', borderRadius: 8, fontSize: 13, fontWeight: 700, background: '#FF6B8A', color: '#fff', textDecoration: 'none' }}>
+              Editar producto →
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div>
