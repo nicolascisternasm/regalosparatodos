@@ -11,11 +11,16 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: 'RegalosParaTodos — Cajas de regalo para cada ocasión',
   description: 'Cajas de regalo temáticas con despacho a todo Chile. Tú eliges la categoría, nosotros armamos y enviamos directo al destinatario.',
+  icons: {
+    icon: '/logo.jpg',
+    apple: '/logo.jpg',
+  },
   openGraph: {
     title: 'RegalosParaTodos',
     description: 'Cajas de regalo temáticas con despacho a todo Chile',
     locale: 'es_CL',
     type: 'website',
+    images: [{ url: '/logo.jpg' }],
   },
 }
 

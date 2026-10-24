@@ -77,21 +77,11 @@ export default function Nav({ cantidadCarrito = 0 }: NavProps) {
       >
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
-          <span
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: '50%',
-              background: 'var(--dark-bg)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 18,
-              flexShrink: 0,
-            }}
-          >
-            🎁
-          </span>
+          <img
+            src="/logo.jpg"
+            alt="RegalosParaTodos"
+            style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+          />
           <span style={{ fontWeight: 700, fontSize: 'clamp(14px, 4vw, 18px)', color: 'var(--fg)', letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>
             <span style={{ fontWeight: 800 }}>Regalos</span>
             <span style={{ color: 'var(--green)', fontWeight: 700 }}>ParaTodos</span>
