@@ -13,6 +13,12 @@ export default function CatalogoPage() {
   const { agregarItem, items } = useCarrito()
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const cat = params.get('cat')
+    if (cat) setCategoriaActiva(cat)
+  }, [])
+
+  useEffect(() => {
     fetch('/api/catalogo')
       .then((r) => r.json())
       .then(({ cajas }) => setCajas(cajas ?? []))

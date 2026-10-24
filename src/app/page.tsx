@@ -29,13 +29,20 @@ const DARK_FEATURES = [
   { icon: '🌿', label: 'Ecológico' },
 ]
 
-const CATEGORIAS = [
-  { emoji: '🎂', label: 'Cumpleaños', href: '/catalogo?cat=Cumpleaños' },
-  { emoji: '💕', label: 'Parejas', href: '/catalogo?cat=Parejas' },
-  { emoji: '👩', label: 'Para Ella', href: '/catalogo?cat=Para ella' },
-  { emoji: '👨', label: 'Para Él', href: '/catalogo?cat=Para él' },
-  { emoji: '👶', label: 'Bebés', href: '/catalogo?cat=Bebé' },
-]
+const CATEGORIA_EMOJI: Record<string, string> = {
+  'cumpleaños': '🎂', 'cumpleanios': '🎂',
+  'parejas': '💕', 'pareja': '💕',
+  'para ella': '👩', 'para ellas': '👩',
+  'para él': '👨', 'para el': '👨', 'para ellos': '👨',
+  'bebés': '👶', 'bebes': '👶', 'bebé': '👶', 'bebe': '👶',
+  'huelitas': '🐾', 'mascotas': '🐾',
+  'para celebrar': '🎉', 'celebrar': '🎉',
+  'aniversario': '💍', 'navidad': '🎄', 'amor': '❤️',
+}
+
+function getCategoriaEmoji(categoria: string): string {
+  return CATEGORIA_EMOJI[categoria.toLowerCase().trim()] ?? '🎁'
+}
 
 const TESTIMONIALS = [
   {
@@ -81,14 +88,21 @@ const SLIDES = [
    ============================ */
 export default function Home() {
   const [cajas, setCajas] = useState<Caja[]>([])
+  const [todasCajas, setTodasCajas] = useState<Caja[]>([])
   const [slideIdx, setSlideIdx] = useState(0)
 
   useEffect(() => {
     fetch('/api/catalogo')
       .then((r) => r.json())
-      .then(({ cajas }) => setCajas((cajas ?? []).slice(0, 4)))
+      .then(({ cajas }) => {
+        const todas = cajas ?? []
+        setTodasCajas(todas)
+        setCajas(todas.slice(0, 4))
+      })
       .catch(() => {})
   }, [])
+
+  const categoriasUnicas = [...new Set(todasCajas.map((c) => c.categoria))].filter(Boolean)
 
   useEffect(() => {
     const t = setInterval(() => setSlideIdx((i) => (i + 1) % SLIDES.length), 5000)
@@ -300,10 +314,10 @@ export default function Home() {
             style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}
             className="flex overflow-x-auto"
           >
-            {CATEGORIAS.map((cat) => (
+            {categoriasUnicas.map((cat) => (
               <Link
-                key={cat.label}
-                href={cat.href}
+                key={cat}
+                href={`/catalogo?cat=${encodeURIComponent(cat)}`}
                 className="cat-item"
                 style={{
                   display: 'flex',
@@ -329,8 +343,8 @@ export default function Home() {
                   e.currentTarget.style.color = 'rgba(255,255,255,.75)'
                 }}
               >
-                <span style={{ fontSize: 22 }}>{cat.emoji}</span>
-                {cat.label}
+                <span style={{ fontSize: 22 }}>{getCategoriaEmoji(cat)}</span>
+                {cat}
               </Link>
             ))}
           </div>
