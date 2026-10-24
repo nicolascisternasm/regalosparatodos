@@ -52,34 +52,56 @@ export default function CatalogoPage() {
 
         <div className="max-w-6xl mx-auto px-6 py-12">
 
-          {/* Filtros tipo tabs */}
-          <div className="flex gap-2 flex-wrap mb-3">
-            {categorias.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setCategoriaActiva(cat)}
-                className="px-5 py-2 text-sm transition-all"
+          {/* Filtros + controles */}
+          <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+            <div className="flex gap-2 flex-wrap">
+              {categorias.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setCategoriaActiva(cat)}
+                  className="px-5 py-2 text-sm transition-all"
+                  style={{
+                    background: categoriaActiva === cat ? 'var(--dark-bg)' : '#fff',
+                    color: categoriaActiva === cat ? '#fff' : 'var(--fg)',
+                    border: `1.5px solid ${categoriaActiva === cat ? 'var(--dark-bg)' : 'var(--border)'}`,
+                    borderRadius: 100,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    fontSize: 14,
+                  }}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Controles de orden y contador */}
+            <div className="flex items-center gap-4">
+              {!cargando && (
+                <p style={{ fontSize: 13, color: 'var(--muted)', whiteSpace: 'nowrap' }}>
+                  {cajasFiltradas.length} {cajasFiltradas.length === 1 ? 'resultado' : 'resultados'}
+                </p>
+              )}
+              <select
                 style={{
-                  background: categoriaActiva === cat ? 'var(--dark-bg)' : '#fff',
-                  color: categoriaActiva === cat ? '#fff' : 'var(--fg)',
-                  border: `1.5px solid ${categoriaActiva === cat ? 'var(--dark-bg)' : 'var(--border)'}`,
+                  padding: '8px 14px',
+                  fontSize: 13,
+                  border: '1.5px solid var(--border)',
                   borderRadius: 100,
-                  fontWeight: 600,
+                  background: '#fff',
+                  color: 'var(--fg)',
                   cursor: 'pointer',
-                  fontSize: 14,
+                  outline: 'none',
+                  fontFamily: 'inherit',
                 }}
               >
-                {cat}
-              </button>
-            ))}
+                <option value="relevancia">Ordenar: Relevancia</option>
+                <option value="precio-asc">Precio: menor a mayor</option>
+                <option value="precio-desc">Precio: mayor a menor</option>
+                <option value="nombre">Nombre A–Z</option>
+              </select>
+            </div>
           </div>
-
-          {/* Contador */}
-          {!cargando && (
-            <p className="text-sm mb-8" style={{ color: 'var(--muted)' }}>
-              {cajasFiltradas.length} {cajasFiltradas.length === 1 ? 'caja disponible' : 'cajas disponibles'}
-            </p>
-          )}
 
           {cargando ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
@@ -137,7 +159,7 @@ function CajaCard({ caja, onAgregar }: { caja: Caja; onAgregar: () => void }) {
       {/* Imagen */}
       <div
         className="relative h-52 flex items-center justify-center overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #FFF0F3 0%, #FFE0EC 50%, #FFF8F0 100%)' }}
+        style={{ background: 'linear-gradient(145deg, #F2F2F2 0%, #E8E8E8 100%)' }}
       >
         {/* Badge descuento */}
         {descuento && (

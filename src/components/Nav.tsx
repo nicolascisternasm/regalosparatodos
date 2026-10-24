@@ -7,9 +7,18 @@ interface NavProps {
   cantidadCarrito?: number
 }
 
+const COLECCIONES = [
+  { emoji: '🎂', label: 'Cumpleaños', href: '/catalogo?cat=Cumpleaños', color: '#FFF0E0' },
+  { emoji: '💕', label: 'Parejas', href: '/catalogo?cat=Parejas', color: '#FFE8F0' },
+  { emoji: '👩', label: 'Para Ella', href: '/catalogo?cat=Para ella', color: '#F0E8FF' },
+  { emoji: '👨', label: 'Para Él', href: '/catalogo?cat=Para él', color: '#E8F4FF' },
+  { emoji: '👶', label: 'Bebés', href: '/catalogo?cat=Bebé', color: '#E8FFF0' },
+]
+
 export default function Nav({ cantidadCarrito = 0 }: NavProps) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [colOpen, setColOpen] = useState(false)
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 10)
@@ -59,7 +68,7 @@ export default function Nav({ cantidadCarrito = 0 }: NavProps) {
         </Link>
 
         {/* Desktop nav links */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-8" style={{ position: 'relative' }}>
           {[
             { label: 'Inicio', href: '/' },
             { label: 'Catálogo', href: '/catalogo' },
@@ -82,6 +91,107 @@ export default function Nav({ cantidadCarrito = 0 }: NavProps) {
               {link.label}
             </Link>
           ))}
+
+          {/* Colecciones dropdown */}
+          <div
+            style={{ position: 'relative' }}
+            onMouseEnter={() => setColOpen(true)}
+            onMouseLeave={() => setColOpen(false)}
+          >
+            <button
+              style={{
+                fontSize: 14,
+                fontWeight: 500,
+                color: colOpen ? 'var(--green)' : 'var(--fg)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4,
+                padding: 0,
+                transition: 'color .2s',
+                fontFamily: 'inherit',
+              }}
+            >
+              Colecciones
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ transition: 'transform .2s', transform: colOpen ? 'rotate(180deg)' : 'none' }}>
+                <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+
+            {colOpen && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '100%',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  marginTop: 16,
+                  background: '#fff',
+                  border: '1px solid var(--border)',
+                  borderRadius: 16,
+                  boxShadow: '0 16px 48px rgba(0,0,0,.14)',
+                  padding: 20,
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(5, 1fr)',
+                  gap: 12,
+                  width: 480,
+                  zIndex: 100,
+                }}
+              >
+                {/* Arrow pointer */}
+                <div style={{
+                  position: 'absolute',
+                  top: -8,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: 16,
+                  height: 8,
+                  overflow: 'hidden',
+                }}>
+                  <div style={{
+                    width: 12,
+                    height: 12,
+                    background: '#fff',
+                    border: '1px solid var(--border)',
+                    transform: 'rotate(45deg)',
+                    margin: '4px auto 0',
+                  }} />
+                </div>
+
+                {COLECCIONES.map((col) => (
+                  <Link
+                    key={col.label}
+                    href={col.href}
+                    onClick={() => setColOpen(false)}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: 8,
+                      textDecoration: 'none',
+                      padding: '12px 8px',
+                      borderRadius: 12,
+                      background: col.color,
+                      transition: 'transform .2s, box-shadow .2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)'
+                      e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,.10)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'none'
+                      e.currentTarget.style.boxShadow = 'none'
+                    }}
+                  >
+                    <span style={{ fontSize: 28 }}>{col.emoji}</span>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--fg)', textAlign: 'center' }}>{col.label}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </nav>
 
         {/* Right side */}

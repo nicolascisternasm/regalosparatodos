@@ -133,31 +133,32 @@ export default function Home() {
             <p
               style={{
                 fontSize: 14,
-                fontWeight: 400,
+                fontWeight: 500,
                 color: 'var(--fg-muted)',
-                marginBottom: 16,
-                letterSpacing: '0.01em',
+                marginBottom: 20,
+                letterSpacing: '0.04em',
+                textTransform: 'uppercase',
               }}
             >
               {slide.subtitle}
             </p>
             <h1
               style={{
-                fontSize: 'clamp(38px, 5vw, 60px)',
-                fontWeight: 700,
+                fontSize: 60,
+                fontWeight: 300,
                 color: 'var(--fg)',
-                lineHeight: 1.15,
-                marginBottom: 4,
+                lineHeight: '80px',
+                marginBottom: 0,
               }}
             >
               {slide.title1}
             </h1>
             <h1
               style={{
-                fontSize: 'clamp(38px, 5vw, 60px)',
-                fontWeight: 800,
+                fontSize: 80,
+                fontWeight: 700,
                 color: 'var(--fg)',
-                lineHeight: 1.15,
+                lineHeight: '80px',
                 marginBottom: 32,
               }}
             >
@@ -197,51 +198,51 @@ export default function Home() {
           {/* Right — product image */}
           <div
             className="hidden md:flex"
-            style={{ alignItems: 'center', justifyContent: 'center', padding: '40px 0', position: 'relative' }}
+            style={{ alignItems: 'center', justifyContent: 'center', padding: '60px 0 40px', position: 'relative' }}
           >
-            {/* Radial rings background */}
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                backgroundImage: `
-                  radial-gradient(circle at 50% 50%, transparent 20%, rgba(130,180,64,.05) 20.5%, transparent 21%),
-                  radial-gradient(circle at 50% 50%, transparent 32%, rgba(130,180,64,.04) 32.5%, transparent 33%),
-                  radial-gradient(circle at 50% 50%, transparent 44%, rgba(130,180,64,.03) 44.5%, transparent 45%),
-                  radial-gradient(circle at 50% 50%, transparent 56%, rgba(130,180,64,.02) 56.5%, transparent 57%)
-                `,
-                pointerEvents: 'none',
-              }}
-            />
+            {/* Decorative rings */}
+            <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+              {[220, 320, 420].map((size, i) => (
+                <div key={i} style={{
+                  position: 'absolute',
+                  top: '50%', left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: size, height: size,
+                  borderRadius: '50%',
+                  border: `1px solid rgba(0,0,0,${0.05 - i * 0.012})`,
+                }} />
+              ))}
+            </div>
 
-            {/* Main product card */}
-            <div
-              style={{
-                width: 300,
-                height: 360,
-                background: 'linear-gradient(145deg, #E8E8E8 0%, #F2F2F2 60%, #DEDEDE 100%)',
-                borderRadius: 12,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 110,
-                boxShadow: '0 20px 60px rgba(0,0,0,.12)',
-                position: 'relative',
-                zIndex: 1,
-              }}
-            >
-              {slide.emoji}
+            {/* Main product — tall portrait, no card box */}
+            <div style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
+              <div
+                style={{
+                  width: 340,
+                  height: 440,
+                  background: 'linear-gradient(160deg, #EBEBEB 0%, #E0E0E0 40%, #D6D6D6 100%)',
+                  borderRadius: 24,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 160,
+                  position: 'relative',
+                  overflow: 'visible',
+                }}
+              >
+                {slide.emoji}
+              </div>
 
-              {/* Rating badge */}
+              {/* Rating badge — top right */}
               <div
                 style={{
                   position: 'absolute',
-                  top: -14,
-                  right: -18,
+                  top: 20,
+                  right: -32,
                   background: '#fff',
-                  borderRadius: 10,
-                  padding: '8px 14px',
-                  boxShadow: '0 4px 20px rgba(0,0,0,.14)',
+                  borderRadius: 12,
+                  padding: '10px 16px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,.14)',
                   fontWeight: 700,
                   fontSize: 13,
                   color: 'var(--fg)',
@@ -251,16 +252,16 @@ export default function Home() {
                 ⭐ 4.9 / 5.0
               </div>
 
-              {/* Shipping badge */}
+              {/* Shipping badge — bottom left */}
               <div
                 style={{
                   position: 'absolute',
-                  bottom: -14,
-                  left: -18,
+                  bottom: 40,
+                  left: -32,
                   background: 'var(--green)',
-                  borderRadius: 10,
-                  padding: '8px 14px',
-                  boxShadow: '0 4px 20px rgba(130,180,64,.5)',
+                  borderRadius: 12,
+                  padding: '10px 16px',
+                  boxShadow: '0 8px 32px rgba(130,180,64,.5)',
                   fontWeight: 700,
                   fontSize: 13,
                   color: '#fff',
@@ -268,6 +269,26 @@ export default function Home() {
                 }}
               >
                 🚚 Envío Chile
+              </div>
+
+              {/* Category chip — bottom center */}
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: -16,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  background: 'var(--fg)',
+                  borderRadius: 100,
+                  padding: '8px 20px',
+                  fontWeight: 600,
+                  fontSize: 12,
+                  color: '#fff',
+                  whiteSpace: 'nowrap',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                Cajas para toda ocasión
               </div>
             </div>
           </div>
@@ -343,8 +364,8 @@ export default function Home() {
                   {f.icon}
                 </div>
                 <div>
-                  <h3 style={{ fontSize: 17, fontWeight: 700, color: 'var(--fg)', marginBottom: 4, lineHeight: 1.3 }}>{f.title}</h3>
-                  <p style={{ fontSize: 14, color: 'var(--fg-muted)', lineHeight: 1.8 }}>{f.desc}</p>
+                  <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--fg)', marginBottom: 4, lineHeight: '25.2px' }}>{f.title}</h3>
+                  <p style={{ fontSize: 16, color: 'var(--fg-muted)', lineHeight: '26px' }}>{f.desc}</p>
                 </div>
               </div>
             ))}
@@ -424,8 +445,8 @@ export default function Home() {
                   {f.icon}
                 </div>
                 <div>
-                  <h3 style={{ fontSize: 17, fontWeight: 700, color: 'var(--fg)', marginBottom: 4, lineHeight: 1.3 }}>{f.title}</h3>
-                  <p style={{ fontSize: 14, color: 'var(--fg-muted)', lineHeight: 1.8 }}>{f.desc}</p>
+                  <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--fg)', marginBottom: 4, lineHeight: '25.2px' }}>{f.title}</h3>
+                  <p style={{ fontSize: 16, color: 'var(--fg-muted)', lineHeight: '26px' }}>{f.desc}</p>
                 </div>
               </div>
             ))}
@@ -560,7 +581,7 @@ export default function Home() {
           <div className="flex items-end justify-between flex-wrap gap-4" style={{ marginBottom: 48 }}>
             <div>
               <p className="section-label">Nuestras cajas</p>
-              <h2 className="section-title">Elige tu caja perfecta</h2>
+              <h2 style={{ fontSize: 44, fontWeight: 700, color: 'var(--fg)', lineHeight: '61.6px', marginBottom: 12 }}>Elige tu caja perfecta</h2>
               <p className="section-desc">
                 Todas armadas a mano y despachadas desde Talagante vía Starken.
               </p>
