@@ -1,516 +1,922 @@
+'use client'
+
+export const dynamic = 'force-dynamic'
+
+import { useEffect, useState } from 'react'
 import Nav from '@/components/Nav'
 import Link from 'next/link'
+import type { Caja } from '@/types'
 
-/* =========================================================
-   HOMEPAGE — adaptado visualmente de xtratheme watch-shop
-   ========================================================= */
+/* ============================
+   DATA
+   ============================ */
+const FEATURES_LEFT = [
+  { icon: '✦', title: 'Armado a mano', desc: 'Cada caja se prepara con cuidado y dedicación.' },
+  { icon: '🚚', title: 'Despacho a todo Chile', desc: 'Enviamos vía Starken los martes y jueves.' },
+  { icon: '💌', title: 'Tarjeta personalizada', desc: 'Incluye un mensaje especial para quien recibe.' },
+]
 
-export default function HomePage() {
+const FEATURES_RIGHT = [
+  { icon: '🎁', title: 'Variedad de productos', desc: 'Más de 6 categorías únicas para cada ocasión.' },
+  { icon: '⏰', title: 'Entrega rápida', desc: 'Despacho en 48 hrs desde confirmación del pedido.' },
+  { icon: '💰', title: 'Precio justo', desc: 'El mejor regalo sin que tu bolsillo lo sienta.' },
+]
+
+const DARK_FEATURES = [
+  { icon: '🎀', label: 'Personalizable' },
+  { icon: '🔒', label: 'Seguro' },
+  { icon: '⭐', label: 'Premium' },
+  { icon: '🌿', label: 'Ecológico' },
+]
+
+const CATEGORIAS = [
+  { emoji: '🎂', label: 'Cumpleaños', href: '/catalogo?cat=Cumpleaños' },
+  { emoji: '💕', label: 'Parejas', href: '/catalogo?cat=Parejas' },
+  { emoji: '👩', label: 'Para Ella', href: '/catalogo?cat=Para ella' },
+  { emoji: '👨', label: 'Para Él', href: '/catalogo?cat=Para él' },
+  { emoji: '👶', label: 'Bebés', href: '/catalogo?cat=Bebé' },
+]
+
+const TESTIMONIALS = [
+  {
+    name: 'María González',
+    role: 'Estudiante universitaria',
+    text: 'La caja llegó perfectamente armada y con una presentación hermosa. ¡Mi amiga quedó emocionada!',
+    rating: 5,
+    avatar: '👩‍🦱',
+  },
+  {
+    name: 'Pedro Valenzuela',
+    role: 'Profesional TI',
+    text: 'Busqué por todos lados algo original para el aniversario. Regalos Para Todos lo resolvió en minutos.',
+    rating: 5,
+    avatar: '👨',
+  },
+  {
+    name: 'Valentina Ríos',
+    role: 'Mamá feliz',
+    text: 'Perfecto para el baby shower. Muy bonita presentación y llegó exactamente como en las fotos.',
+    rating: 5,
+    avatar: '👩',
+  },
+]
+
+const SLIDES = [
+  {
+    subtitle: 'Despacho rápido a todo Chile',
+    title1: 'El regalo perfecto',
+    title2: 'para cada momento',
+    emoji: '🎁',
+  },
+  {
+    subtitle: 'Armado con cariño, entregado con amor',
+    title1: 'Sorprende a quien',
+    title2: 'más quieres',
+    emoji: '🎀',
+  },
+]
+
+/* ============================
+   PAGE
+   ============================ */
+export default function Home() {
+  const [cajas, setCajas] = useState<Caja[]>([])
+  const [slideIdx, setSlideIdx] = useState(0)
+
+  useEffect(() => {
+    fetch('/api/catalogo')
+      .then((r) => r.json())
+      .then(({ cajas }) => setCajas((cajas ?? []).slice(0, 4)))
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    const t = setInterval(() => setSlideIdx((i) => (i + 1) % SLIDES.length), 5000)
+    return () => clearInterval(t)
+  }, [])
+
+  const slide = SLIDES[slideIdx]
+
   return (
     <>
-      <Nav />
-      <main style={{ background: 'var(--bg)' }}>
+      <Nav cantidadCarrito={0} />
 
-        {/* ── 1. HERO SPLIT ──────────────────────────────────── */}
-        <section
-          className="relative min-h-screen flex items-center overflow-hidden"
-          style={{ background: 'var(--dark-bg)' }}
+      {/* =============================================
+          HERO — fondo gris claro, split layout
+          ============================================= */}
+      <section
+        style={{
+          background: 'var(--bg-hero)',
+          minHeight: '100vh',
+          paddingTop: 72,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <div
+          className="hero-grid"
+          style={{
+            flex: 1,
+            maxWidth: 1200,
+            margin: '0 auto',
+            width: '100%',
+            padding: '0 24px',
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: 40,
+            alignItems: 'center',
+            minHeight: 'calc(100vh - 72px - 80px)',
+          }}
         >
-          {/* Anillos concéntricos (fondo derecho) */}
-          <div className="radial-rings" />
-
-          <div className="max-w-7xl mx-auto w-full px-6 pt-24 pb-16 grid md:grid-cols-2 gap-12 items-center">
-
-            {/* Columna izquierda — features + CTA */}
-            <div className="fade-up">
-              <p
-                className="text-xs font-700 uppercase tracking-widest mb-5"
-                style={{ color: 'var(--gold)' }}
-              >
-                Regalos únicos para cada persona
-              </p>
-              <h1
-                className="text-5xl md:text-6xl font-900 mb-6 leading-tight"
-                style={{ color: '#fff', letterSpacing: '-0.03em' }}
-              >
-                El regalo<br />
-                <span style={{ color: 'var(--gold)' }}>perfecto</span><br />
-                existe.
-              </h1>
-
-              {/* Lista de features */}
-              <ul className="space-y-4 mb-10">
-                {[
-                  { icon: '🚚', titulo: 'Envío a todo Chile', desc: 'Despachamos vía Starken martes y jueves.' },
-                  { icon: '🎀', titulo: 'Armado a mano', desc: 'Cada caja se prepara con atención al detalle.' },
-                  { icon: '💬', titulo: 'Atención por WhatsApp', desc: 'Coordinas el pago y los detalles con nosotros.' },
-                  { icon: '💝', titulo: 'Con tarjeta personalizada', desc: 'Tu mensaje escrito a mano para el destinatario.' },
-                ].map(({ icon, titulo, desc }) => (
-                  <li key={titulo} className="flex items-start gap-3">
-                    <span className="text-xl mt-0.5 flex-shrink-0">{icon}</span>
-                    <div>
-                      <p className="font-700 text-sm" style={{ color: '#fff' }}>{titulo}</p>
-                      <p className="text-xs" style={{ color: 'rgba(255,255,255,.45)' }}>{desc}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="flex gap-4 flex-wrap">
-                <Link
-                  href="/catalogo"
-                  className="px-8 py-4 rounded-full font-800 text-base no-underline transition-all hover:scale-105 active:scale-95"
-                  style={{ background: 'var(--gold)', color: '#fff', boxShadow: '0 8px 30px rgba(255,107,138,.45)' }}
-                >
-                  Explorar cajas →
-                </Link>
-                <Link
-                  href="#como-funciona"
-                  className="px-8 py-4 rounded-full font-600 text-base no-underline"
-                  style={{ border: '1.5px solid rgba(255,255,255,.2)', color: 'rgba(255,255,255,.7)' }}
-                >
-                  Cómo funciona
-                </Link>
-              </div>
-            </div>
-
-            {/* Columna derecha — producto protagonista */}
-            <div className="relative flex items-center justify-center min-h-80">
-              {/* Círculo de fondo */}
-              <div
-                className="absolute w-80 h-80 md:w-96 md:h-96 rounded-full"
-                style={{ background: 'radial-gradient(circle, rgba(255,107,138,.18) 0%, rgba(255,107,138,.04) 60%, transparent 80%)' }}
-              />
-              {/* Producto (placeholder reemplazable por imagen real) */}
-              <div
-                className="relative w-64 h-64 md:w-80 md:h-80 rounded-3xl flex items-center justify-center text-9xl"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,107,138,.15) 0%, rgba(255,159,69,.10) 100%)',
-                  border: '1px solid rgba(255,107,138,.2)',
-                  backdropFilter: 'blur(10px)',
-                }}
-              >
-                {/* REEMPLAZAR: imagen real de caja regalo */}
-                🎁
-                <div
-                  className="absolute -top-3 -right-3 text-4xl"
-                  style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,.3))' }}
-                >
-                  ✨
-                </div>
-              </div>
-
-              {/* Badges flotantes */}
-              <div
-                className="absolute top-6 left-8 px-3 py-2 rounded-xl text-xs font-700"
-                style={{ background: 'rgba(255,255,255,.08)', border: '1px solid rgba(255,255,255,.12)', color: '#fff', backdropFilter: 'blur(8px)' }}
-              >
-                🌟 +50 cajas disponibles
-              </div>
-              <div
-                className="absolute bottom-10 right-4 px-3 py-2 rounded-xl text-xs font-700"
-                style={{ background: 'rgba(255,107,138,.2)', border: '1px solid rgba(255,107,138,.3)', color: 'var(--gold)', backdropFilter: 'blur(8px)' }}
-              >
-                🚚 Despacho martes y jueves
-              </div>
-            </div>
-          </div>
-
-          {/* Flecha scroll */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.3)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="m6 9 6 6 6-6"/>
-            </svg>
-          </div>
-        </section>
-
-        {/* ── 2. SECCIÓN OSCURA — características principales ── */}
-        <section
-          className="py-24 px-6 relative overflow-hidden"
-          style={{ background: 'var(--dark-card)' }}
-        >
-          <div className="max-w-5xl mx-auto text-center">
-            <p className="text-xs font-700 uppercase tracking-widest mb-3" style={{ color: 'var(--gold)' }}>
-              RegalosParaTodos
-            </p>
-            <h2
-              className="text-3xl md:text-4xl font-900 mb-4 leading-tight"
-              style={{ color: '#fff', letterSpacing: '-0.02em' }}
-            >
-              Un regalo armado con amor<br />
-              <span style={{ color: 'var(--gold)' }}>directo a quien quieres</span>
-            </h2>
-            <p className="text-base mb-16 max-w-xl mx-auto" style={{ color: 'rgba(255,255,255,.5)' }}>
-              Tú eliges la categoría, nosotros armamos la caja y la enviamos con tarjeta personalizada directo al destinatario, donde sea en Chile.
-            </p>
-
-            {/* Grilla de features con icono circular — igual a la referencia */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-              {[
-                { icon: '🎀', label: 'Armado a mano' },
-                { icon: '🚚', label: 'Envío a todo Chile' },
-                { icon: '💳', label: 'Pago por transferencia' },
-                { icon: '💬', label: 'Atención WhatsApp' },
-              ].map(({ icon, label }) => (
-                <div key={label} className="flex flex-col items-center gap-3">
-                  <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center text-2xl"
-                    style={{ background: 'rgba(255,107,138,.12)', border: '1.5px solid rgba(255,107,138,.25)' }}
-                  >
-                    {icon}
-                  </div>
-                  <p className="text-sm font-600" style={{ color: 'rgba(255,255,255,.7)' }}>{label}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Imagen central grande */}
-            <div
-              className="mx-auto w-52 h-52 rounded-full flex items-center justify-center text-8xl"
+          {/* Left — text */}
+          <div style={{ paddingTop: 40, paddingBottom: 40 }}>
+            <p
               style={{
-                background: 'radial-gradient(circle, rgba(255,107,138,.2) 0%, rgba(255,107,138,.05) 60%, transparent 80%)',
-                border: '1px solid rgba(255,107,138,.15)',
+                fontSize: 14,
+                fontWeight: 400,
+                color: 'var(--fg-muted)',
+                marginBottom: 16,
+                letterSpacing: '0.01em',
               }}
             >
-              {/* REEMPLAZAR: imagen real del producto */}
-              🎁
+              {slide.subtitle}
+            </p>
+            <h1
+              style={{
+                fontSize: 'clamp(38px, 5vw, 60px)',
+                fontWeight: 700,
+                color: 'var(--fg)',
+                lineHeight: 1.15,
+                marginBottom: 4,
+              }}
+            >
+              {slide.title1}
+            </h1>
+            <h1
+              style={{
+                fontSize: 'clamp(38px, 5vw, 60px)',
+                fontWeight: 800,
+                color: 'var(--fg)',
+                lineHeight: 1.15,
+                marginBottom: 32,
+              }}
+            >
+              {slide.title2}
+            </h1>
+
+            <div className="flex flex-wrap gap-3">
+              <Link href="/catalogo" className="btn-primary">
+                Comprar ahora
+              </Link>
+              <Link href="/#como-funciona" className="btn-outline">
+                ▷&nbsp; Cómo funciona
+              </Link>
+            </div>
+
+            {/* Slide dots */}
+            <div className="flex gap-2" style={{ marginTop: 40 }}>
+              {SLIDES.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setSlideIdx(i)}
+                  style={{
+                    width: i === slideIdx ? 28 : 8,
+                    height: 8,
+                    borderRadius: 100,
+                    background: i === slideIdx ? 'var(--fg)' : 'var(--border)',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'width .3s, background .3s',
+                    padding: 0,
+                  }}
+                />
+              ))}
             </div>
           </div>
-        </section>
 
-        {/* ── 3. TICKER ANIMADO ─────────────────────────────── */}
-        <div
-          className="overflow-hidden py-4"
-          style={{ background: 'var(--gold)', color: '#fff' }}
-          aria-hidden="true"
-        >
-          <div className="ticker-track">
-            {Array(6).fill(null).map((_, i) => (
-              <span key={i} className="flex items-center gap-4 pr-12 text-sm font-800 uppercase tracking-wider whitespace-nowrap">
-                ENVÍO MARTES Y JUEVES ⚡
-                <span className="opacity-60">|</span>
-                DESPACHO A TODO CHILE ⚡
-                <span className="opacity-60">|</span>
-                CAJAS ARMADAS A MANO ⚡
-                <span className="opacity-60">|</span>
-                PAGO POR TRANSFERENCIA ⚡
-                <span className="opacity-60">|</span>
-              </span>
-            ))}
+          {/* Right — product image */}
+          <div
+            className="hidden md:flex"
+            style={{ alignItems: 'center', justifyContent: 'center', padding: '40px 0', position: 'relative' }}
+          >
+            {/* Radial rings background */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundImage: `
+                  radial-gradient(circle at 50% 50%, transparent 20%, rgba(130,180,64,.05) 20.5%, transparent 21%),
+                  radial-gradient(circle at 50% 50%, transparent 32%, rgba(130,180,64,.04) 32.5%, transparent 33%),
+                  radial-gradient(circle at 50% 50%, transparent 44%, rgba(130,180,64,.03) 44.5%, transparent 45%),
+                  radial-gradient(circle at 50% 50%, transparent 56%, rgba(130,180,64,.02) 56.5%, transparent 57%)
+                `,
+                pointerEvents: 'none',
+              }}
+            />
+
+            {/* Main product card */}
+            <div
+              style={{
+                width: 300,
+                height: 360,
+                background: 'linear-gradient(145deg, #E8E8E8 0%, #F2F2F2 60%, #DEDEDE 100%)',
+                borderRadius: 12,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 110,
+                boxShadow: '0 20px 60px rgba(0,0,0,.12)',
+                position: 'relative',
+                zIndex: 1,
+              }}
+            >
+              {slide.emoji}
+
+              {/* Rating badge */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: -14,
+                  right: -18,
+                  background: '#fff',
+                  borderRadius: 10,
+                  padding: '8px 14px',
+                  boxShadow: '0 4px 20px rgba(0,0,0,.14)',
+                  fontWeight: 700,
+                  fontSize: 13,
+                  color: 'var(--fg)',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                ⭐ 4.9 / 5.0
+              </div>
+
+              {/* Shipping badge */}
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: -14,
+                  left: -18,
+                  background: 'var(--green)',
+                  borderRadius: 10,
+                  padding: '8px 14px',
+                  boxShadow: '0 4px 20px rgba(130,180,64,.5)',
+                  fontWeight: 700,
+                  fontSize: 13,
+                  color: '#fff',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                🚚 Envío Chile
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* ── 4. PRODUCTOS DESTACADOS ───────────────────────── */}
-        <section id="catalogo-preview" className="py-24 px-6" style={{ background: '#fff' }}>
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-14">
-              <p className="text-xs font-700 uppercase tracking-widest mb-3" style={{ color: 'var(--orange)' }}>
-                Nuestras cajas
-              </p>
-              <h2
-                className="text-3xl md:text-4xl font-900 mb-3"
-                style={{ color: 'var(--fg)', letterSpacing: '-0.02em' }}
+        {/* Category strip — black */}
+        <div style={{ background: 'var(--dark-bg)', width: '100%' }}>
+          <div
+            style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}
+            className="flex overflow-x-auto"
+          >
+            {CATEGORIAS.map((cat) => (
+              <Link
+                key={cat.label}
+                href={cat.href}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 4,
+                  padding: '20px 32px',
+                  color: 'rgba(255,255,255,.75)',
+                  textDecoration: 'none',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  whiteSpace: 'nowrap',
+                  borderRight: '1px solid rgba(255,255,255,.08)',
+                  transition: 'color .2s, background .2s',
+                  flexShrink: 0,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,.07)'
+                  e.currentTarget.style.color = '#fff'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent'
+                  e.currentTarget.style.color = 'rgba(255,255,255,.75)'
+                }}
               >
-                Para cada ocasión
-              </h2>
-              <p className="text-base" style={{ color: 'var(--muted)' }}>
-                Cajas temáticas seleccionadas para cada tipo de persona y momento especial.
-              </p>
-            </div>
+                <span style={{ fontSize: 22 }}>{cat.emoji}</span>
+                {cat.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            {/* Mini-catálogo estático para la homepage */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 mb-12">
-              {[
-                { emoji: '❤️', cat: 'Amor', nombre: 'Caja Romántica', precio: 29990, desde: true },
-                { emoji: '🎂', cat: 'Cumpleaños', nombre: 'Caja Celebración', precio: 24990, desde: true },
-                { emoji: '👨‍👩‍👧', cat: 'Familia', nombre: 'Caja Familiar', precio: 34990, desde: true },
-                { emoji: '🌟', cat: 'Ocasiones', nombre: 'Caja Premium', precio: 44990, desde: true },
-              ].map(({ emoji, cat, nombre, precio, desde }) => (
-                <Link
-                  href="/catalogo"
-                  key={nombre}
-                  className="rounded-2xl overflow-hidden flex flex-col no-underline group transition-all hover:-translate-y-1.5"
-                  style={{ border: '1.5px solid var(--border)', background: '#fff', boxShadow: '0 2px 8px rgba(43,10,26,.04)' }}
+      {/* =============================================
+          FEATURES — 3 columns: features | product | features
+          ============================================= */}
+      <section style={{ background: '#fff', padding: '100px 24px' }}>
+        <div
+          className="features-grid"
+          style={{ maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 48, alignItems: 'center' }}
+        >
+          {/* Left */}
+          <div className="flex flex-col gap-8">
+            {FEATURES_LEFT.map((f) => (
+              <div key={f.title} className="flex items-start gap-4">
+                <div
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: '50%',
+                    background: 'rgba(130,180,64,.12)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 20,
+                    flexShrink: 0,
+                  }}
                 >
+                  {f.icon}
+                </div>
+                <div>
+                  <h3 style={{ fontSize: 17, fontWeight: 700, color: 'var(--fg)', marginBottom: 4, lineHeight: 1.3 }}>{f.title}</h3>
+                  <p style={{ fontSize: 14, color: 'var(--fg-muted)', lineHeight: 1.8 }}>{f.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Center product */}
+          <div className="flex items-center justify-center" style={{ position: 'relative' }}>
+            <div
+              style={{
+                width: 260,
+                height: 320,
+                background: 'linear-gradient(145deg, #F0F0F0 0%, #E6E6E6 100%)',
+                borderRadius: 10,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 100,
+                boxShadow: '0 24px 64px rgba(0,0,0,.10)',
+                position: 'relative',
+              }}
+            >
+              🎁
+              {/* Corner dots */}
+              {[
+                { top: '18%', right: -30 },
+                { bottom: '18%', right: -30 },
+                { top: '18%', left: -30 },
+                { bottom: '18%', left: -30 },
+              ].map((pos, i) => (
+                <div
+                  key={i}
+                  style={{
+                    position: 'absolute',
+                    ...pos,
+                    width: 10,
+                    height: 10,
+                    borderRadius: '50%',
+                    background: 'var(--green)',
+                    boxShadow: '0 0 0 4px rgba(130,180,64,.2)',
+                  }}
+                />
+              ))}
+              {/* Horizontal guide lines */}
+              {['18%', '82%'].map((top) => (
+                <div
+                  key={top}
+                  style={{
+                    position: 'absolute',
+                    top,
+                    left: -30,
+                    right: -30,
+                    height: 1,
+                    background: 'rgba(0,0,0,.08)',
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Right */}
+          <div className="flex flex-col gap-8">
+            {FEATURES_RIGHT.map((f) => (
+              <div key={f.title} className="flex items-start gap-4">
+                <div
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: '50%',
+                    background: 'rgba(130,180,64,.12)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 20,
+                    flexShrink: 0,
+                  }}
+                >
+                  {f.icon}
+                </div>
+                <div>
+                  <h3 style={{ fontSize: 17, fontWeight: 700, color: 'var(--fg)', marginBottom: 4, lineHeight: 1.3 }}>{f.title}</h3>
+                  <p style={{ fontSize: 14, color: 'var(--fg-muted)', lineHeight: 1.8 }}>{f.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* =============================================
+          DARK SECTION — producto con badges circulares
+          ============================================= */}
+      <section
+        id="nosotros"
+        style={{
+          background: 'var(--dark-bg)',
+          padding: '100px 24px',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Dot texture */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,.04) 1px, transparent 1px)',
+            backgroundSize: '32px 32px',
+            pointerEvents: 'none',
+          }}
+        />
+
+        <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative' }}>
+          {/* Header */}
+          <div className="text-center" style={{ marginBottom: 64 }}>
+            <h2 style={{ fontSize: 'clamp(26px, 4vw, 36px)', fontWeight: 700, color: '#fff', marginBottom: 12 }}>
+              RegalosParaTodos
+            </h2>
+            <p style={{ fontSize: 16, color: 'rgba(255,255,255,.5)', maxWidth: 520, margin: '0 auto', lineHeight: 2 }}>
+              Creamos experiencias de regalo únicas. Tú eliges la categoría, nosotros armamos y despachamos.
+            </p>
+          </div>
+
+          {/* Badges + product */}
+          <div className="flex items-center justify-center flex-wrap" style={{ gap: 60 }}>
+            {/* Left badges */}
+            <div className="flex flex-col gap-8">
+              {DARK_FEATURES.slice(0, 2).map((f) => (
+                <div key={f.label} className="flex flex-col items-center gap-3">
                   <div
-                    className="h-44 flex items-center justify-center text-7xl relative overflow-hidden"
-                    style={{ background: 'linear-gradient(135deg, #FFF0F3 0%, #FFE4EC 50%, #FFF8F0 100%)' }}
+                    style={{
+                      width: 80,
+                      height: 80,
+                      borderRadius: '50%',
+                      border: '2px solid rgba(255,255,255,.15)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 30,
+                      background: 'rgba(255,255,255,.06)',
+                    }}
                   >
-                    <span className="transition-transform duration-300 group-hover:scale-110 inline-block">
-                      {emoji}
-                    </span>
+                    {f.icon}
                   </div>
-                  <div className="p-4 flex flex-col gap-1">
-                    <p className="text-xs font-700 uppercase tracking-wider" style={{ color: 'var(--orange)' }}>
-                      {cat}
-                    </p>
-                    <p className="font-800 text-sm" style={{ color: 'var(--fg)' }}>{nombre}</p>
-                    <p className="text-xs font-600 mt-1" style={{ color: 'var(--muted)' }}>
-                      {desde ? 'Desde ' : ''}${precio.toLocaleString('es-CL')}
-                    </p>
-                  </div>
-                </Link>
+                  <span style={{ fontSize: 13, fontWeight: 300, color: 'rgba(255,255,255,.65)' }}>{f.label}</span>
+                </div>
               ))}
             </div>
 
-            <div className="text-center">
-              <Link
-                href="/catalogo"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-full font-800 no-underline transition-all hover:scale-105"
-                style={{ background: 'var(--dark-bg)', color: '#fff' }}
-              >
-                Ver todas las cajas →
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* ── 5. CÓMO FUNCIONA ──────────────────────────────── */}
-        <section id="como-funciona" className="py-24 px-6" style={{ background: 'var(--bg-soft)' }}>
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-14">
-              <p className="text-xs font-700 uppercase tracking-widest mb-3" style={{ color: 'var(--orange)' }}>
-                Proceso
-              </p>
-              <h2
-                className="text-3xl md:text-4xl font-900 mb-3"
-                style={{ color: 'var(--fg)', letterSpacing: '-0.02em' }}
-              >
-                Así de simple
-              </h2>
-              <p className="text-base" style={{ color: 'var(--muted)' }}>
-                Desde que eliges hasta que llega a quien más quieres.
-              </p>
+            {/* Center product */}
+            <div
+              style={{
+                width: 240,
+                height: 300,
+                borderRadius: 16,
+                background: 'rgba(255,255,255,.06)',
+                border: '1px solid rgba(255,255,255,.12)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 100,
+                boxShadow: '0 0 60px rgba(130,180,64,.15)',
+              }}
+            >
+              🎁
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                {
-                  n: '01',
-                  emoji: '🎁',
-                  titulo: 'Elige tu caja',
-                  desc: 'Navega el catálogo y agrega al carrito las cajas que más te gusten. Cada categoría tiene opciones para distintos presupuestos.',
-                },
-                {
-                  n: '02',
-                  emoji: '📝',
-                  titulo: 'Confirma el pedido',
-                  desc: 'Ingresa los datos de entrega, un mensaje para la tarjeta y confirma. Coordinamos el pago contigo por WhatsApp.',
-                },
-                {
-                  n: '03',
-                  emoji: '🚚',
-                  titulo: 'Lo enviamos',
-                  desc: 'Verificamos el pago y despachamos vía Starken martes y jueves. Tú puedes seguir el pedido desde el sistema.',
-                },
-              ].map((paso) => (
-                <div
-                  key={paso.n}
-                  className="rounded-2xl p-7 relative overflow-hidden"
-                  style={{ background: '#fff', border: '1.5px solid var(--border)' }}
-                >
-                  {/* Número decorativo de fondo */}
-                  <p
-                    className="absolute top-4 right-5 font-900 select-none pointer-events-none"
-                    style={{ color: 'rgba(255,107,138,.07)', fontSize: 64, lineHeight: 1 }}
+            {/* Right badges */}
+            <div className="flex flex-col gap-8">
+              {DARK_FEATURES.slice(2, 4).map((f) => (
+                <div key={f.label} className="flex flex-col items-center gap-3">
+                  <div
+                    style={{
+                      width: 80,
+                      height: 80,
+                      borderRadius: '50%',
+                      border: '2px solid rgba(255,255,255,.15)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 30,
+                      background: 'rgba(255,255,255,.06)',
+                    }}
                   >
-                    {paso.n}
-                  </p>
-                  <div className="text-4xl mb-5">{paso.emoji}</div>
-                  <h3 className="font-800 text-lg mb-2" style={{ color: 'var(--fg)' }}>{paso.titulo}</h3>
-                  <p className="text-sm leading-relaxed" style={{ color: 'var(--muted)' }}>{paso.desc}</p>
+                    {f.icon}
+                  </div>
+                  <span style={{ fontSize: 13, fontWeight: 300, color: 'rgba(255,255,255,.65)' }}>{f.label}</span>
                 </div>
               ))}
             </div>
           </div>
-        </section>
 
-        {/* ── 6. NOSOTROS (split lifestyle) ─────────────────── */}
-        <section
-          id="nosotros"
-          className="py-24 px-6 relative overflow-hidden"
-          style={{ background: 'var(--dark-bg)' }}
-        >
-          <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-
-            {/* Texto */}
-            <div>
-              <p className="text-xs font-700 uppercase tracking-widest mb-4" style={{ color: 'var(--gold)' }}>
-                Quiénes somos
-              </p>
-              <h2
-                className="text-3xl md:text-4xl font-900 mb-6 leading-tight"
-                style={{ color: '#fff', letterSpacing: '-0.02em' }}
-              >
-                Un emprendimiento<br />
-                hecho con <span style={{ color: 'var(--gold)' }}>amor</span>
-              </h2>
-              <p className="text-base leading-relaxed mb-6" style={{ color: 'rgba(255,255,255,.55)' }}>
-                Somos un emprendimiento familiar nacido en Talagante. Creemos que un regalo bien elegido puede hacer la diferencia en el día de alguien.
-              </p>
-              <p className="text-base leading-relaxed mb-10" style={{ color: 'rgba(255,255,255,.55)' }}>
-                Cada caja la armamos personalmente, con productos seleccionados y un mensaje escrito a mano. Queremos que quien recibe la caja sienta que alguien pensó en él.
-              </p>
-              <div className="flex gap-4 flex-wrap">
-                <Link
-                  href="/catalogo"
-                  className="px-7 py-3.5 rounded-full font-800 no-underline transition-all hover:scale-105"
-                  style={{ background: 'var(--gold)', color: '#fff', boxShadow: '0 6px 24px rgba(255,107,138,.4)' }}
-                >
-                  Ver catálogo
-                </Link>
-                <a
-                  href={`https://wa.me/56912345678?text=Hola%2C%20me%20gustar%C3%ADa%20conocer%20m%C3%A1s%20sobre%20sus%20cajas%20regalo`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-7 py-3.5 rounded-full font-700 no-underline transition-all hover:scale-105"
-                  style={{ border: '1.5px solid rgba(255,255,255,.2)', color: 'rgba(255,255,255,.7)' }}
-                >
-                  Escríbenos por WhatsApp
-                </a>
+          {/* Stats */}
+          <div className="flex justify-center flex-wrap gap-16" style={{ marginTop: 72 }}>
+            {[
+              { num: '+200', label: 'Pedidos enviados' },
+              { num: '100%', label: 'Armado a mano' },
+              { num: '4.9★', label: 'Calificación promedio' },
+            ].map((s) => (
+              <div key={s.label} className="text-center">
+                <p style={{ fontSize: 38, fontWeight: 800, color: 'var(--green)', lineHeight: 1 }}>{s.num}</p>
+                <p style={{ fontSize: 13, color: 'rgba(255,255,255,.45)', marginTop: 6 }}>{s.label}</p>
               </div>
-            </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-            {/* Imagen lifestyle — REEMPLAZAR por foto real */}
-            <div className="relative flex items-center justify-center">
+      {/* =============================================
+          PRODUCT GRID
+          ============================================= */}
+      <section style={{ background: '#fff', padding: '100px 24px' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <div className="flex items-end justify-between flex-wrap gap-4" style={{ marginBottom: 48 }}>
+            <div>
+              <p className="section-label">Nuestras cajas</p>
+              <h2 className="section-title">Elige tu caja perfecta</h2>
+              <p className="section-desc">
+                Todas armadas a mano y despachadas desde Talagante vía Starken.
+              </p>
+            </div>
+            <Link href="/catalogo" className="btn-outline">
+              Ver todo el catálogo →
+            </Link>
+          </div>
+
+          {cajas.length > 0 ? (
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                gap: 24,
+              }}
+            >
+              {cajas.map((caja) => (
+                <ProductCard key={caja.id} caja={caja} />
+              ))}
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 24 }}>
+              {[...Array(4)].map((_, i) => (
+                <div key={i} style={{ height: 340, background: '#F0F0F0', borderRadius: 4 }} />
+              ))}
+            </div>
+          )}
+
+          <div className="flex justify-center" style={{ marginTop: 40 }}>
+            <Link href="/catalogo" className="btn-primary">
+              Descubrir más ↓
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* =============================================
+          CÓMO FUNCIONA
+          ============================================= */}
+      <section id="como-funciona" style={{ background: 'var(--bg-soft)', padding: '100px 24px' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <div className="text-center" style={{ marginBottom: 64 }}>
+            <p className="section-label">Simple y sin complicaciones</p>
+            <h2 className="section-title">Cómo funciona</h2>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 28 }}>
+            {[
+              { n: '01', icon: '🔍', title: 'Elige tu caja', desc: 'Navega el catálogo y selecciona la caja que mejor se ajuste a la persona y la ocasión.' },
+              { n: '02', icon: '✍️', title: 'Personaliza el mensaje', desc: 'Agrega un mensaje de tarjeta especial que irá incluido dentro de la caja.' },
+              { n: '03', icon: '📦', title: 'Nosotros enviamos', desc: 'Armamos la caja con cuidado y la despachamos directo a quien quieras sorprender.' },
+            ].map((step) => (
               <div
-                className="w-full max-w-sm aspect-[3/4] rounded-3xl flex flex-col items-center justify-center gap-4"
+                key={step.n}
                 style={{
-                  background: 'linear-gradient(160deg, rgba(255,107,138,.15) 0%, rgba(255,107,138,.05) 100%)',
-                  border: '1px solid rgba(255,107,138,.2)',
+                  background: '#fff',
+                  borderRadius: 8,
+                  padding: '40px 32px',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  boxShadow: '0 2px 12px rgba(0,0,0,.05)',
                 }}
               >
-                <span className="text-7xl">🎁</span>
-                <p className="text-sm font-700 text-center px-8" style={{ color: 'rgba(255,255,255,.5)' }}>
-                  {/* REEMPLAZAR: imagen del equipo o del proceso de armado */}
-                  [Foto del equipo o proceso de armado]
-                </p>
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: 8,
+                    right: 20,
+                    fontSize: 80,
+                    fontWeight: 800,
+                    color: 'rgba(130,180,64,.07)',
+                    lineHeight: 1,
+                    userSelect: 'none',
+                  }}
+                >
+                  {step.n}
+                </span>
+                <div
+                  style={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: '50%',
+                    background: 'var(--green)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 28,
+                    marginBottom: 20,
+                  }}
+                >
+                  {step.icon}
+                </div>
+                <h3 style={{ fontSize: 20, fontWeight: 700, color: 'var(--fg)', marginBottom: 10 }}>{step.title}</h3>
+                <p style={{ fontSize: 14, color: 'var(--fg-muted)', lineHeight: 1.8 }}>{step.desc}</p>
               </div>
-              {/* Stat flotante */}
-              <div
-                className="absolute -bottom-4 -left-4 px-5 py-4 rounded-2xl"
-                style={{ background: 'var(--gold)', color: '#fff' }}
-              >
-                <p className="font-900 text-2xl">100%</p>
-                <p className="text-xs font-600">Armado a mano</p>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* =============================================
+          TESTIMONIALS
+          ============================================= */}
+      <section style={{ background: '#fff', padding: '100px 24px' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <div className="text-center" style={{ marginBottom: 48 }}>
+            <p className="section-label">Testimonios</p>
+            <h2 className="section-title">Lo que dicen nuestros clientes</h2>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
+            {TESTIMONIALS.map((t, i) => (
+              <div key={i} style={{ background: 'var(--bg-soft)', borderRadius: 8, padding: '32px 28px' }}>
+                <span style={{ fontSize: 48, color: 'var(--green)', lineHeight: 1, fontFamily: 'Georgia, serif', display: 'block', marginBottom: 8, opacity: 0.5 }}>
+                  "
+                </span>
+                <p style={{ fontSize: 15, color: 'var(--fg)', lineHeight: 1.8, marginBottom: 20 }}>{t.text}</p>
+                <div className="stars" style={{ fontSize: 14, marginBottom: 16 }}>
+                  {'★'.repeat(t.rating)}
+                </div>
+                <div className="flex items-center gap-3">
+                  <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'var(--green)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>
+                    {t.avatar}
+                  </div>
+                  <div>
+                    <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--fg)' }}>{t.name}</p>
+                    <p style={{ fontSize: 12, color: 'var(--fg-muted)' }}>{t.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* =============================================
+          DARK CTA
+          ============================================= */}
+      <section
+        style={{ background: 'var(--dark-bg)', padding: '100px 24px', position: 'relative', overflow: 'hidden' }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `
+              linear-gradient(rgba(130,180,64,.06) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(130,180,64,.06) 1px, transparent 1px)
+            `,
+            backgroundSize: '48px 48px',
+            pointerEvents: 'none',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 600,
+            height: 400,
+            background: 'radial-gradient(ellipse, rgba(130,180,64,.12) 0%, transparent 70%)',
+            pointerEvents: 'none',
+          }}
+        />
+
+        <div className="text-center" style={{ position: 'relative' }}>
+          <h2 style={{ fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 700, color: '#fff', marginBottom: 16 }}>
+            Encuentra tu caja ideal
+          </h2>
+          <p style={{ fontSize: 16, color: 'rgba(255,255,255,.5)', maxWidth: 500, margin: '0 auto 36px', lineHeight: 2 }}>
+            Regalos únicos para cada persona y ocasión especial. Armados a mano y enviados con amor.
+          </p>
+          <div className="flex justify-center gap-4 flex-wrap">
+            <Link href="/catalogo" className="btn-primary">Comprar ahora</Link>
+            <Link href="/#como-funciona" className="btn-outline-white">Ver cómo funciona</Link>
+          </div>
+        </div>
+      </section>
+
+      {/* =============================================
+          FOOTER
+          ============================================= */}
+      <footer style={{ background: '#fff', borderTop: '1px solid var(--border)', padding: '64px 24px 32px' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+          <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 2fr', gap: 40 }}>
+            {/* Brand */}
+            <div>
+              <div className="flex items-center gap-2" style={{ marginBottom: 16 }}>
+                <span style={{ fontSize: 24 }}>🎁</span>
+                <span style={{ fontWeight: 800, fontSize: 16, color: 'var(--fg)' }}>
+                  Regalos<span style={{ color: 'var(--green)' }}>ParaTodos</span>
+                </span>
+              </div>
+              <p style={{ fontSize: 14, color: 'var(--fg-muted)', lineHeight: 1.8, maxWidth: 240 }}>
+                Cajas de regalo temáticas con despacho a todo Chile. Armadas con cariño desde Talagante.
+              </p>
+              <div className="flex gap-3" style={{ marginTop: 20 }}>
+                {['◑', 'f', '♪'].map((icon, i) => (
+                  <a
+                    key={i}
+                    href="#"
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: '50%',
+                      border: '1.5px solid var(--border)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 14,
+                      color: 'var(--fg-muted)',
+                      textDecoration: 'none',
+                      transition: 'border-color .2s, color .2s',
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--green)'; e.currentTarget.style.color = 'var(--green)' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--fg-muted)' }}
+                  >
+                    {icon}
+                  </a>
+                ))}
               </div>
             </div>
-          </div>
-        </section>
 
-        {/* ── 7. FOOTER ──────────────────────────────────────── */}
-        <footer style={{ background: '#110508' }}>
-          {/* Newsletter */}
-          <div
-            className="border-b px-6 py-14"
-            style={{ borderColor: 'rgba(255,255,255,.06)' }}
-          >
-            <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-              <div>
-                <h3 className="font-900 text-xl mb-1" style={{ color: '#fff' }}>
-                  ¿Quieres enterarte de novedades?
-                </h3>
-                <p className="text-sm" style={{ color: 'rgba(255,255,255,.4)' }}>
-                  Nuevas cajas, descuentos y más. Sin spam.
-                </p>
-              </div>
-              {/* FUNCIONALIDAD PENDIENTE: suscripción por email */}
-              <div className="flex gap-2 w-full md:w-auto">
+            {/* Menu */}
+            <div>
+              <h4 style={{ fontSize: 14, fontWeight: 700, color: 'var(--fg)', marginBottom: 16 }}>Menú</h4>
+              {[['Inicio', '/'], ['Catálogo', '/catalogo'], ['Cómo funciona', '/#como-funciona'], ['Nosotros', '/#nosotros']].map(([label, href]) => (
+                <a key={label} href={href} style={{ display: 'block', fontSize: 14, color: 'var(--fg-muted)', textDecoration: 'none', marginBottom: 10 }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--green)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--fg-muted)' }}>
+                  {label}
+                </a>
+              ))}
+            </div>
+
+            {/* Support */}
+            <div>
+              <h4 style={{ fontSize: 14, fontWeight: 700, color: 'var(--fg)', marginBottom: 16 }}>Soporte</h4>
+              {['Preguntas frecuentes', 'Términos y condiciones', 'Política de privacidad', 'Contacto'].map((item) => (
+                <a key={item} href="#" style={{ display: 'block', fontSize: 14, color: 'var(--fg-muted)', textDecoration: 'none', marginBottom: 10 }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--green)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--fg-muted)' }}>
+                  {item}
+                </a>
+              ))}
+            </div>
+
+            {/* Newsletter */}
+            <div>
+              <h4 style={{ fontSize: 14, fontWeight: 700, color: 'var(--fg)', marginBottom: 8 }}>Mantente al día</h4>
+              <p style={{ fontSize: 13, color: 'var(--fg-muted)', marginBottom: 16, lineHeight: 1.6 }}>
+                Recibe novedades y descuentos antes que nadie.
+              </p>
+              <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
                 <input
                   type="email"
                   placeholder="tu@email.com"
-                  className="flex-1 md:w-56 px-4 py-3 rounded-full text-sm outline-none"
-                  style={{ background: 'rgba(255,255,255,.07)', border: '1px solid rgba(255,255,255,.12)', color: '#fff' }}
+                  style={{ flex: 1, padding: '10px 16px', fontSize: 14, border: '1.5px solid var(--border)', borderRadius: 100, outline: 'none', color: 'var(--fg)' }}
                 />
-                <button
-                  className="px-5 py-3 rounded-full text-sm font-700 flex-shrink-0"
-                  style={{ background: 'var(--gold)', color: '#fff' }}
-                >
+                <button type="submit" className="btn-primary" style={{ padding: '10px 20px', fontSize: 13 }}>
                   Suscribir
                 </button>
-              </div>
+              </form>
             </div>
           </div>
 
-          {/* Links */}
-          <div className="px-6 py-12">
-            <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
-              {/* Brand */}
-              <div className="md:col-span-2">
-                <div className="flex items-center gap-2.5 mb-4">
-                  <span
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-900"
-                    style={{ background: 'var(--gold)', color: '#fff' }}
-                  >
-                    R
-                  </span>
-                  <span className="font-900 text-base" style={{ color: '#fff' }}>
-                    Regalos<span style={{ color: 'var(--gold)' }}>Para</span>Todos
-                  </span>
-                </div>
-                <p className="text-sm leading-relaxed mb-5" style={{ color: 'rgba(255,255,255,.35)' }}>
-                  Cajas regalo armadas con amor desde Talagante, Chile. Despachamos a todo el país vía Starken.
-                </p>
-              </div>
-
-              {/* Menú */}
-              <div>
-                <p className="text-xs font-700 uppercase tracking-widest mb-4" style={{ color: 'rgba(255,255,255,.3)' }}>
-                  Menú
-                </p>
-                <ul className="space-y-2.5">
-                  {[
-                    { href: '/catalogo', label: 'Catálogo' },
-                    { href: '/#como-funciona', label: 'Cómo funciona' },
-                    { href: '/#nosotros', label: 'Nosotros' },
-                    { href: '/carrito', label: 'Carrito' },
-                  ].map(({ href, label }) => (
-                    <li key={href}>
-                      <Link href={href} className="text-sm no-underline hover:underline" style={{ color: 'rgba(255,255,255,.45)' }}>
-                        {label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Contacto */}
-              <div>
-                <p className="text-xs font-700 uppercase tracking-widest mb-4" style={{ color: 'rgba(255,255,255,.3)' }}>
-                  Contacto
-                </p>
-                <ul className="space-y-2.5 text-sm" style={{ color: 'rgba(255,255,255,.45)' }}>
-                  <li>📍 Talagante, Chile</li>
-                  <li>
-                    <a
-                      href="https://wa.me/56912345678"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="no-underline hover:underline"
-                      style={{ color: 'rgba(255,255,255,.45)' }}
-                    >
-                      💬 WhatsApp
-                    </a>
-                  </li>
-                  <li>🚚 Despachos mar. y jue.</li>
-                </ul>
-              </div>
-            </div>
-
-            <div
-              className="mt-12 pt-6 flex items-center justify-between flex-wrap gap-4"
-              style={{ borderTop: '1px solid rgba(255,255,255,.06)' }}
-            >
-              <p className="text-xs" style={{ color: 'rgba(255,255,255,.2)' }}>
-                © {new Date().getFullYear()} RegalosParaTodos.cl — Todos los derechos reservados
-              </p>
-              <p className="text-xs" style={{ color: 'rgba(255,255,255,.2)' }}>
-                Talagante, Región Metropolitana, Chile
-              </p>
-            </div>
+          {/* Bottom */}
+          <div
+            className="flex flex-wrap justify-between items-center gap-4"
+            style={{ marginTop: 48, paddingTop: 24, borderTop: '1px solid var(--border)' }}
+          >
+            <p style={{ fontSize: 13, color: 'var(--fg-muted)' }}>© 2024 RegalosParaTodos. Todos los derechos reservados.</p>
+            <p style={{ fontSize: 13, color: 'var(--fg-muted)' }}>Talagante, Región Metropolitana · Chile 🇨🇱</p>
           </div>
-        </footer>
-      </main>
+        </div>
+      </footer>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .hero-grid { grid-template-columns: 1fr !important; }
+          .features-grid { grid-template-columns: 1fr !important; }
+          .footer-grid { grid-template-columns: 1fr 1fr !important; }
+        }
+        @media (max-width: 480px) {
+          .footer-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </>
+  )
+}
+
+/* ============================
+   PRODUCT CARD
+   ============================ */
+function ProductCard({ caja }: { caja: Caja }) {
+  const [agregado, setAgregado] = useState(false)
+  const descuento = caja.precio_original
+    ? Math.round((1 - caja.precio / caja.precio_original) * 100)
+    : null
+
+  function handleAgregar() {
+    setAgregado(true)
+    setTimeout(() => setAgregado(false), 1800)
+  }
+
+  return (
+    <article className="product-card" style={{ border: '1px solid var(--border-soft)' }}>
+      <div
+        style={{
+          height: 220,
+          background: 'linear-gradient(135deg, #F5F5F5 0%, #EBEBEB 100%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {descuento && (
+          <span className="badge-sale" style={{ position: 'absolute', top: 12, left: 12 }}>
+            -{descuento}%
+          </span>
+        )}
+        <span style={{ fontSize: 80, transition: 'transform .3s' }} role="img" aria-label={caja.nombre}>
+          {caja.emoji}
+        </span>
+      </div>
+
+      <div style={{ padding: '20px' }}>
+        <span className="badge-cat">{caja.categoria}</span>
+        <h3 style={{ fontSize: 17, fontWeight: 600, color: 'var(--fg)', margin: '8px 0 4px', lineHeight: 1.3 }}>
+          {caja.nombre}
+        </h3>
+        <div className="stars" style={{ fontSize: 13, marginBottom: 12 }}>★★★★★</div>
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <span style={{ fontSize: 20, fontWeight: 700, color: 'var(--fg)' }}>
+              ${caja.precio.toLocaleString('es-CL')}
+            </span>
+            {caja.precio_original && (
+              <span style={{ fontSize: 13, textDecoration: 'line-through', color: 'var(--fg-muted)', marginLeft: 8 }}>
+                ${caja.precio_original.toLocaleString('es-CL')}
+              </span>
+            )}
+          </div>
+          <button
+            onClick={handleAgregar}
+            className="btn-primary"
+            style={{ padding: '8px 16px', fontSize: 12, background: agregado ? '#2DA44E' : undefined, borderColor: agregado ? '#2DA44E' : undefined }}
+          >
+            {agregado ? '✓' : '+ Agregar'}
+          </button>
+        </div>
+      </div>
+    </article>
   )
 }

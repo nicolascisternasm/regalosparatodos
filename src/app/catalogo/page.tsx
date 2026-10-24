@@ -30,22 +30,21 @@ export default function CatalogoPage() {
       <Nav cantidadCarrito={cantidadCarrito} />
       <main className="min-h-screen" style={{ background: 'var(--bg)' }}>
 
-        {/* Header del catálogo — fondo oscuro como la referencia */}
+        {/* Header del catálogo */}
         <div
           className="pt-24 pb-14 px-6"
           style={{ background: 'var(--dark-bg)' }}
         >
           <div className="max-w-6xl mx-auto">
-            <p className="text-xs font-700 uppercase tracking-widest mb-3" style={{ color: 'var(--gold)' }}>
+            <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--green)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 12 }}>
               Catálogo
             </p>
             <h1
-              className="text-4xl md:text-5xl font-900 mb-3"
-              style={{ color: '#fff', letterSpacing: '-0.03em' }}
+              style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 700, color: '#fff', marginBottom: 12, letterSpacing: '-0.02em' }}
             >
               Elige tu caja perfecta
             </h1>
-            <p style={{ color: 'rgba(255,255,255,.5)' }}>
+            <p style={{ color: 'rgba(255,255,255,.5)', fontSize: 16 }}>
               Todas las cajas se arman y despachan desde Talagante vía Starken.
             </p>
           </div>
@@ -59,11 +58,15 @@ export default function CatalogoPage() {
               <button
                 key={cat}
                 onClick={() => setCategoriaActiva(cat)}
-                className="px-5 py-2 rounded-full text-sm font-700 transition-all"
+                className="px-5 py-2 text-sm transition-all"
                 style={{
                   background: categoriaActiva === cat ? 'var(--dark-bg)' : '#fff',
                   color: categoriaActiva === cat ? '#fff' : 'var(--fg)',
                   border: `1.5px solid ${categoriaActiva === cat ? 'var(--dark-bg)' : 'var(--border)'}`,
+                  borderRadius: 100,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  fontSize: 14,
                 }}
               >
                 {cat}
