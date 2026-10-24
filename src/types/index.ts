@@ -18,6 +18,7 @@ export interface Caja {
   id: string
   nombre: string
   descripcion: string
+  descripcion_corta?: string
   precio: number
   precio_original?: number
   emoji: string
@@ -26,12 +27,38 @@ export interface Caja {
   stock?: number
   activo: boolean
   orden: number
+  tipo: 'simple' | 'variantes'
   created_at: string
+}
+
+export interface VarianteImagen {
+  id: string
+  variante_id: string
+  url: string
+  es_principal: boolean
+  orden: number
+  created_at: string
+}
+
+export interface Variante {
+  id: string
+  caja_id: string
+  nombre: string
+  sku?: string
+  descripcion?: string
+  precio?: number
+  stock: number
+  estado: 'borrador' | 'publicada' | 'archivada'
+  orden: number
+  imagenes?: VarianteImagen[]
+  created_at: string
+  updated_at: string
 }
 
 export interface ItemCarrito {
   caja: Caja
   cantidad: number
+  variante?: Variante
 }
 
 export interface DatosComprador {
@@ -103,6 +130,9 @@ export interface ItemPedido {
   precio_unitario: number  // snapshot
   cantidad: number
   subtotal: number
+  variante_id?: string
+  variante_nombre?: string  // snapshot
+  variante_sku?: string     // snapshot
 }
 
 export interface Pago {

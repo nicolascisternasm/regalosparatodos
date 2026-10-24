@@ -1,9 +1,13 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import type { Caja, ItemCarrito } from '@/types'
+import type { Caja, ItemCarrito, Variante } from '@/types'
 
 const STORAGE_KEY = 'rpt_carrito'
+
+function itemKey(cajaId: string, varianteId?: string) {
+  return `${cajaId}:${varianteId ?? ''}`
+}
 
 function leerStorage(): ItemCarrito[] {
   try {
@@ -27,30 +31,41 @@ export function useCarrito() {
     setItems(leerStorage())
   }, [])
 
-  const agregarItem = useCallback((caja: Caja) => {
+  const agregarItem = useCallback((caja: Caja, variante?: Variante) => {
     setItems((prev) => {
-      const existe = prev.find((i) => i.caja.id === caja.id)
+      const key = itemKey(caja.id, variante?.id)
+      const existe = prev.find((i) => itemKey(i.caja.id, i.variante?.id) === key)
       const nuevos = existe
-        ? prev.map((i) => i.caja.id === caja.id ? { ...i, cantidad: i.cantidad + 1 } : i)
-        : [...prev, { caja, cantidad: 1 }]
+        ? prev.map((i) =>
+            itemKey(i.caja.id, i.variante?.id) === key
+              ? { ...i, cantidad: i.cantidad + 1 }
+              : i
+          )
+        : [...prev, { caja, variante, cantidad: 1 }]
       guardarStorage(nuevos)
       return nuevos
     })
   }, [])
 
-  const reducirItem = useCallback((cajaId: string) => {
+  const reducirItem = useCallback((cajaId: string, varianteId?: string) => {
     setItems((prev) => {
+      const key = itemKey(cajaId, varianteId)
       const nuevos = prev
-        .map((i) => i.caja.id === cajaId ? { ...i, cantidad: i.cantidad - 1 } : i)
+        .map((i) =>
+          itemKey(i.caja.id, i.variante?.id) === key
+            ? { ...i, cantidad: i.cantidad - 1 }
+            : i
+        )
         .filter((i) => i.cantidad > 0)
       guardarStorage(nuevos)
       return nuevos
     })
   }, [])
 
-  const eliminarItem = useCallback((cajaId: string) => {
+  const eliminarItem = useCallback((cajaId: string, varianteId?: string) => {
     setItems((prev) => {
-      const nuevos = prev.filter((i) => i.caja.id !== cajaId)
+      const key = itemKey(cajaId, varianteId)
+      const nuevos = prev.filter((i) => itemKey(i.caja.id, i.variante?.id) !== key)
       guardarStorage(nuevos)
       return nuevos
     })
@@ -61,7 +76,10 @@ export function useCarrito() {
     guardarStorage([])
   }, [])
 
-  const subtotal = items.reduce((acc, i) => acc + i.caja.precio * i.cantidad, 0)
+  const subtotal = items.reduce(
+    (acc, i) => acc + (i.variante?.precio ?? i.caja.precio) * i.cantidad,
+    0
+  )
 
   return { items, agregarItem, reducirItem, eliminarItem, vaciarCarrito, subtotal }
 }

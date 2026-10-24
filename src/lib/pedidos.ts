@@ -27,7 +27,7 @@ export async function crearPedido(input: CrearPedidoInput): Promise<Pedido> {
   const { items, comprador, destinatario, despacho } = input
 
   const subtotal = items.reduce(
-    (acc, i) => acc + i.caja.precio * i.cantidad,
+    (acc, i) => acc + (i.variante?.precio ?? i.caja.precio) * i.cantidad,
     0
   )
   const total = subtotal + COSTO_DESPACHO
@@ -67,15 +67,21 @@ export async function crearPedido(input: CrearPedidoInput): Promise<Pedido> {
 
   if (pedidoError) throw pedidoError
 
-  const itemsData = items.map((i) => ({
-    pedido_id: pedido.id,
-    caja_id: i.caja.id,
-    caja_nombre: i.caja.nombre,
-    caja_emoji: i.caja.emoji,
-    precio_unitario: i.caja.precio,
-    cantidad: i.cantidad,
-    subtotal: i.caja.precio * i.cantidad,
-  }))
+  const itemsData = items.map((i) => {
+    const precioUnitario = i.variante?.precio ?? i.caja.precio
+    return {
+      pedido_id: pedido.id,
+      caja_id: i.caja.id,
+      caja_nombre: i.caja.nombre,
+      caja_emoji: i.caja.emoji,
+      precio_unitario: precioUnitario,
+      cantidad: i.cantidad,
+      subtotal: precioUnitario * i.cantidad,
+      variante_id: i.variante?.id ?? null,
+      variante_nombre: i.variante?.nombre ?? null,
+      variante_sku: i.variante?.sku ?? null,
+    }
+  })
 
   const { error: itemsError } = await admin.from('items_pedido').insert(itemsData)
   if (itemsError) throw itemsError

@@ -21,10 +21,14 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json()
-    const { nombre, descripcion, categoria, precio, precio_original, stock, emoji, imagen_url, activo, orden } = body
+    const { nombre, descripcion, descripcion_corta, categoria, precio, precio_original, stock, emoji, imagen_url, activo, orden, tipo } = body
 
-    if (!nombre || !descripcion || !categoria || !precio) {
+    if (!nombre || !descripcion || !categoria) {
       return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400 })
+    }
+    const tipoFinal = tipo === 'variantes' ? 'variantes' : 'simple'
+    if (tipoFinal === 'simple' && !precio) {
+      return NextResponse.json({ error: 'El precio es obligatorio para productos simples' }, { status: 400 })
     }
 
     const { data, error } = await createAdminClient()
@@ -32,14 +36,16 @@ export async function POST(req: NextRequest) {
       .insert([{
         nombre: nombre.trim(),
         descripcion: descripcion.trim(),
+        descripcion_corta: descripcion_corta?.trim() || null,
         categoria: categoria.trim(),
-        precio: Number(precio),
+        precio: Number(precio ?? 1),
         precio_original: precio_original ? Number(precio_original) : null,
         stock: Number(stock ?? 0),
         emoji: emoji || '🎁',
         imagen_url: imagen_url || null,
         activo: activo ?? true,
         orden: Number(orden ?? 0),
+        tipo: tipoFinal,
       }])
       .select()
       .single()

@@ -397,7 +397,13 @@ export default function CajasAdminPage() {
                           </div>
 
                           {/* Acciones caja */}
-                          <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                          <div style={{ display: 'flex', gap: 6, flexShrink: 0, flexWrap: 'wrap' }}>
+                            {caja.tipo === 'variantes' && (
+                              <Link href={`/admin/cajas/${caja.id}/variantes`}
+                                style={{ padding: '4px 9px', borderRadius: 6, fontSize: 11, fontWeight: 700, background: '#FFF0F5', color: '#FF6B8A', border: '1px solid #F5D5DE', textDecoration: 'none' }}>
+                                Variantes
+                              </Link>
+                            )}
                             <button onClick={() => toggleActivoCaja(caja)}
                               style={{ padding: '4px 9px', borderRadius: 6, fontSize: 11, fontWeight: 600, background: caja.activo ? '#D4EDDA' : '#F8D7DA', color: caja.activo ? '#155724' : '#721C24', border: 'none', cursor: 'pointer' }}>
                               {caja.activo ? '● Activa' : '○ Inactiva'}

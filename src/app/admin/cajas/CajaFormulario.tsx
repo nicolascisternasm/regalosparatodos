@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useAdminToken } from '@/app/admin/AdminAuthContext'
 import type { Caja } from '@/types'
 
@@ -31,6 +32,7 @@ export default function CajaFormulario({ modo, inicial = {}, cajaId }: Props) {
   const [form, setForm] = useState({
     nombre: inicial.nombre ?? '',
     descripcion: inicial.descripcion ?? '',
+    descripcion_corta: (inicial as Partial<Caja & { descripcion_corta?: string }>).descripcion_corta ?? '',
     categoria: inicial.categoria ?? '',
     precio: inicial.precio?.toString() ?? '',
     precio_original: inicial.precio_original?.toString() ?? '',
@@ -39,6 +41,7 @@ export default function CajaFormulario({ modo, inicial = {}, cajaId }: Props) {
     imagen_url: inicial.imagen_url ?? '',
     activo: inicial.activo ?? true,
     orden: inicial.orden?.toString() ?? '0',
+    tipo: ((inicial as Record<string, unknown>).tipo as 'simple' | 'variantes') ?? 'simple',
   })
 
   const [subiendo, setSubiendo] = useState(false)
@@ -85,14 +88,16 @@ export default function CajaFormulario({ modo, inicial = {}, cajaId }: Props) {
       const payload = {
         nombre: form.nombre,
         descripcion: form.descripcion,
+        descripcion_corta: form.descripcion_corta || null,
         categoria: form.categoria,
-        precio: Number(form.precio),
+        precio: form.tipo === 'simple' ? Number(form.precio) : (Number(form.precio) || 1000),
         precio_original: form.precio_original ? Number(form.precio_original) : null,
         stock: Number(form.stock),
         emoji: form.emoji,
         imagen_url: form.imagen_url || null,
         activo: form.activo,
         orden: Number(form.orden),
+        tipo: form.tipo,
       }
 
       let res: Response
@@ -146,17 +151,68 @@ export default function CajaFormulario({ modo, inicial = {}, cajaId }: Props) {
         </div>
       )}
 
+      {/* Tipo de producto */}
+      <div style={{ marginBottom: 20 }}>
+        <label style={estiloLabel}>Tipo de producto</label>
+        <div style={{ display: 'flex', gap: 10 }}>
+          {(['simple', 'variantes'] as const).map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => set('tipo', t)}
+              style={{
+                padding: '8px 18px', borderRadius: 8, fontSize: 13, fontWeight: 600,
+                background: form.tipo === t ? '#FF6B8A' : '#fff',
+                color: form.tipo === t ? '#fff' : '#2B0A1A',
+                border: `1.5px solid ${form.tipo === t ? '#FF6B8A' : '#F5D5DE'}`,
+                cursor: 'pointer',
+              }}
+            >
+              {t === 'simple' ? 'Producto simple' : 'Con variantes'}
+            </button>
+          ))}
+        </div>
+        {form.tipo === 'variantes' && cajaId && (
+          <div style={{ marginTop: 10, padding: '10px 14px', background: '#FFF0F5', borderRadius: 8, border: '1px solid #F5D5DE' }}>
+            <p style={{ fontSize: 13, color: '#2B0A1A', margin: 0 }}>
+              Este producto usa variantes.{' '}
+              <Link href={`/admin/cajas/${cajaId}/variantes`} style={{ color: '#FF6B8A', fontWeight: 700 }}>
+                Gestionar variantes →
+              </Link>
+            </p>
+          </div>
+        )}
+        {form.tipo === 'variantes' && !cajaId && (
+          <p style={{ fontSize: 12, color: '#A06070', marginTop: 8 }}>
+            Guarda primero el producto para luego agregar variantes.
+          </p>
+        )}
+      </div>
+
       {/* Nombre */}
       <div style={{ marginBottom: 16 }}>
         <label style={estiloLabel}>Nombre *</label>
         <input required style={estiloInput} value={form.nombre} onChange={(e) => set('nombre', e.target.value)} placeholder="Ej: Caja de Cumpleaños Deluxe" />
       </div>
 
+      {/* Descripción corta (solo variantes) */}
+      {form.tipo === 'variantes' && (
+        <div style={{ marginBottom: 16 }}>
+          <label style={estiloLabel}>Descripción corta (se muestra en el catálogo)</label>
+          <input
+            style={estiloInput}
+            value={form.descripcion_corta}
+            onChange={(e) => set('descripcion_corta', e.target.value)}
+            placeholder="Ej: La graduación más especial, con tu peluche favorito"
+          />
+        </div>
+      )}
+
       {/* Descripción */}
       <div style={{ marginBottom: 16 }}>
-        <label style={estiloLabel}>Descripción *</label>
+        <label style={estiloLabel}>Descripción {form.tipo === 'variantes' ? '(detalle completo)' : '*'}</label>
         <textarea
-          required
+          required={form.tipo === 'simple'}
           rows={3}
           style={{ ...estiloInput, resize: 'vertical' }}
           value={form.descripcion}

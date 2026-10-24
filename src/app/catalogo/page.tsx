@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import type { Caja } from '@/types'
 import { useCarrito } from '@/hooks/useCarrito'
 import Nav from '@/components/Nav'
@@ -128,6 +129,7 @@ export default function CatalogoPage() {
               ))}
             </div>
           )}
+
         </div>
       </main>
     </>
@@ -212,16 +214,26 @@ function CajaCard({ caja, onAgregar }: { caja: Caja; onAgregar: () => void }) {
               </span>
             )}
           </div>
-          <button
-            onClick={handleAgregar}
-            className="px-4 py-2 rounded-full text-xs font-800 transition-all flex-shrink-0"
-            style={{
-              background: agregado ? '#16a34a' : 'var(--dark-bg)',
-              color: '#fff',
-            }}
-          >
-            {agregado ? '✓ Agregado' : 'Agregar'}
-          </button>
+          {caja.tipo === 'variantes' ? (
+            <Link
+              href={`/catalogo/${caja.id}`}
+              className="px-4 py-2 rounded-full text-xs font-800 transition-all flex-shrink-0 no-underline"
+              style={{ background: 'var(--dark-bg)', color: '#fff' }}
+            >
+              Ver opciones →
+            </Link>
+          ) : (
+            <button
+              onClick={handleAgregar}
+              className="px-4 py-2 rounded-full text-xs font-800 transition-all flex-shrink-0"
+              style={{
+                background: agregado ? '#16a34a' : 'var(--dark-bg)',
+                color: '#fff',
+              }}
+            >
+              {agregado ? '✓ Agregado' : 'Agregar'}
+            </button>
+          )}
         </div>
       </div>
     </article>

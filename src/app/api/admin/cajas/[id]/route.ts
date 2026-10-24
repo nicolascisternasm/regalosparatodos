@@ -22,16 +22,18 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     const body = await req.json()
     const campos: Record<string, unknown> = {}
 
-    if (body.nombre !== undefined)          campos.nombre = body.nombre.trim()
-    if (body.descripcion !== undefined)     campos.descripcion = body.descripcion.trim()
-    if (body.categoria !== undefined)       campos.categoria = body.categoria.trim()
-    if (body.precio !== undefined)          campos.precio = Number(body.precio)
-    if (body.precio_original !== undefined) campos.precio_original = body.precio_original ? Number(body.precio_original) : null
-    if (body.stock !== undefined)           campos.stock = Number(body.stock)
-    if (body.emoji !== undefined)           campos.emoji = body.emoji
-    if (body.imagen_url !== undefined)      campos.imagen_url = body.imagen_url || null
-    if (body.activo !== undefined)          campos.activo = Boolean(body.activo)
-    if (body.orden !== undefined)           campos.orden = Number(body.orden)
+    if (body.nombre !== undefined)            campos.nombre = body.nombre.trim()
+    if (body.descripcion !== undefined)       campos.descripcion = body.descripcion.trim()
+    if (body.descripcion_corta !== undefined) campos.descripcion_corta = body.descripcion_corta?.trim() || null
+    if (body.categoria !== undefined)         campos.categoria = body.categoria.trim()
+    if (body.precio !== undefined)            campos.precio = Number(body.precio)
+    if (body.precio_original !== undefined)   campos.precio_original = body.precio_original ? Number(body.precio_original) : null
+    if (body.stock !== undefined)             campos.stock = Number(body.stock)
+    if (body.emoji !== undefined)             campos.emoji = body.emoji
+    if (body.imagen_url !== undefined)        campos.imagen_url = body.imagen_url || null
+    if (body.activo !== undefined)            campos.activo = Boolean(body.activo)
+    if (body.orden !== undefined)             campos.orden = Number(body.orden)
+    if (body.tipo !== undefined)              campos.tipo = body.tipo
 
     const { data, error } = await createAdminClient()
       .from('cajas')
