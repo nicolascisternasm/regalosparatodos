@@ -234,17 +234,16 @@ export default function Home() {
                 style={{
                   width: 340,
                   height: 440,
-                  background: 'linear-gradient(160deg, #EBEBEB 0%, #E0E0E0 40%, #D6D6D6 100%)',
                   borderRadius: 24,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 160,
                   position: 'relative',
-                  overflow: 'visible',
+                  overflow: 'hidden',
                 }}
               >
-                {slide.emoji}
+                <img
+                  src="/hero-caja.jpg"
+                  alt="Caja de regalo premium"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
+                />
               </div>
 
               {/* Rating badge — top right */}
